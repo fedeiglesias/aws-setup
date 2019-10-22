@@ -1,3 +1,3 @@
 # aws-setup
 
-run `wget -O - https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master/setup.sh | bash' 
+run `source <(curl -s https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master/setup.sh)`
