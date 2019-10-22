@@ -9,12 +9,12 @@
 
 # Install nvm and node
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh | bash
-  source ~/.bashrc
+  exec bash
   nvm install node
 
 # Install Acme.sh
   wget -O - https://get.acme.sh | sh
-  source ~/.bashrc
+  exec bash
 
 # Install ZSH from source
 #  sudo yum -y install gcc
