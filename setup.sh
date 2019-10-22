@@ -7,6 +7,15 @@
 # Install wget and git
   sudo yum -y install git
 
+# Install nginx
+ sudo yum -y install nginx
+ sudo chkconfig nginx on
+ # Must config reverse proxy to route 80 to 3000 port
+ #sudo vi /etc/nginx/nginx.conf
+ #location / { proxy_pass http://127.0.0.1:3000; }
+ #sudo service nginx restart
+ 
+
 # Install nvm and node
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh | bash
   source ~/.bashrc
