@@ -19,7 +19,7 @@
 # Install nvm and node
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh | bash
   source ~/.bashrc
-  nvm install node
+  nvm install node --lts
 
 # Install Acme.sh
   wget -O - https://get.acme.sh | sh
