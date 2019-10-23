@@ -1,11 +1,13 @@
 
 # Install AWS Lightsail webserver with SSL cert
 
+
+
 #Route 53 API keys
 echo '####################################################################'
 read -p 'AWS KEY ID: ' aws_key_id
 read -p 'AWS KEY PASSWORD: ' aws_key_password
-read -p 'DOMAIN' domain
+read -p 'DOMAIN: ' domain
 echo '####################################################################'
 
 
@@ -32,6 +34,8 @@ echo '####################################################################'
   nvm install --lts
 
 # Install Acme.sh with sudo access
+  # create crontab for sudo (is used by acme.sh to renew certificates each 80 days)
+  sudo crontab -e
   # clone repo
   cd /tmp && git clone https://github.com/Neilpang/acme.sh.git
   # get inside and install
