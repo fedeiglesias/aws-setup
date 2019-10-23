@@ -49,15 +49,16 @@ cat > account.conf << EOF
   export AWS_ACCESS_KEY_ID=$aws_key_id
   export AWS_SECRET_ACCESS_KEY=$aws_key_password
 EOF
+cd ~/
 
 # Test Letsencript wilcard issue
 acme.sh --test --issue --log --dns dns_aws -d "*.$domain" -d $domain
 
 # Delete test folders
-rm -rf ~/.acme.sh/*$domain
+# rm -rf ~/.acme.sh/*$domain
 
 # Now run the issuing command twice (it will fail on the first run) just changing –test to –force
-acme.sh --force --issue --log --dns dns_aws -d *.$domain -d $domain
+# acme.sh --force --issue --log --dns dns_aws -d *.$domain -d $domain
 
 # Install the certificate in some sensible place as the directory structure of ~/.acme.sh may change in the future.
 mkdir $certs_dir && mkdir $certs_dir/*.$domain
