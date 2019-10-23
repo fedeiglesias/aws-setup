@@ -51,6 +51,9 @@ cat > account.conf << EOF
 EOF
 cd ~/
 
+# Install the certificate in some sensible place as the directory structure of ~/.acme.sh may change in the future.
+mkdir $certs_dir && mkdir $certs_dir/*.$domain
+
 # Test Letsencript wilcard issue
 acme.sh --test --issue --log --dns dns_aws -d "*.$domain" -d $domain
 
@@ -60,8 +63,6 @@ acme.sh --test --issue --log --dns dns_aws -d "*.$domain" -d $domain
 # Now run the issuing command twice (it will fail on the first run) just changing –test to –force
 # acme.sh --force --issue --log --dns dns_aws -d *.$domain -d $domain
 
-# Install the certificate in some sensible place as the directory structure of ~/.acme.sh may change in the future.
-mkdir $certs_dir && mkdir $certs_dir/*.$domain
 
 #SSL files
 cert_file=$certs_dir/*.$domain/*.$domain.cer
@@ -69,7 +70,7 @@ key_file=$certs_dir/*.$domain/*.$domain.key
 fullchain_file=$certs_dir/*.$domain/fullchain.cer
 
 # Install certs
-acme.sh --install-cert -d *.$domain --cert-file cert_file --key-file key_file --fullchain-file fullchain_file
+acme.sh --install-cert -d *.$domain --cert-file $cert_file --key-file $key_file --fullchain-file $fullchain_file
 
 #reload nginx
 service nginx reload
