@@ -33,17 +33,21 @@ echo '####################################################################'
   source ~/.bashrc
   nvm install --lts
 
-# Install Acme.sh with sudo access
-  # create crontab for sudo (is used by acme.sh to renew certificates each 80 days)
-  # sudo crontab -e
+# Install Acme.sh
   # clone repo
   cd /tmp && git clone https://github.com/Neilpang/acme.sh.git
   # get inside and install
-  cd /tmp/acme.sh && sudo ./acme.sh --install
+  cd /tmp/acme.sh && ./acme.sh --install
   # remove tmp dir
   cd ~/ && rm -rf /tmp/acme.sh
   # restart bash
   source ~/.bashrc
+
+  cd ~/.acme.sh && rm account.conf
+  cat > account.conf << EOF
+    export AWS_ACCESS_KEY_ID=$aws_key_id
+    export AWS_SECRET_ACCESS_KEY=$aws_key_password
+  EOF;
 
 
 # Install ZSH from source
