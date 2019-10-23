@@ -35,7 +35,7 @@ echo '####################################################################'
 
 # Install Acme.sh with sudo access
   # create crontab for sudo (is used by acme.sh to renew certificates each 80 days)
-  sudo crontab -e
+  # sudo crontab -e
   # clone repo
   cd /tmp && git clone https://github.com/Neilpang/acme.sh.git
   # get inside and install
