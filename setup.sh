@@ -41,7 +41,7 @@ echo '####################################################################'
   # get inside and install
   cd /tmp/acme.sh && sudo ./acme.sh --install
   # remove tmp dir
-  #rm -rf /tmp/acme.sh
+  cd /tmp && rm -rf /tmp/acme.sh
   # restart bash
   source ~/.bashrc
 
