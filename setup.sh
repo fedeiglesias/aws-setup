@@ -7,48 +7,71 @@
 echo '####################################################################'
 read -p 'AWS KEY ID: ' aws_key_id
 read -p 'AWS KEY PASSWORD: ' aws_key_password
-read -p 'DOMAIN: ' domain
+read -e -p "DOMAIN: " -i "fedeiglesias.com" domain
+read -e -p "CERT DIRECTORY: " -i "~/ssl" certs_dir
 echo '####################################################################'
 
-
 # Update yum packages
-  sudo yum -y update
-  sudo yum -y upgrade
+sudo yum -y update
+sudo yum -y upgrade
 
 # Install wget and git
-  sudo yum -y install git
+sudo yum -y install git
 
 # Install nginx
- sudo yum -y install nginx
- #start nginx a startup
- sudo chkconfig nginx on
- # Must config reverse proxy to route 80 to 3000 port
- #sudo vi /etc/nginx/nginx.conf
- #location / { proxy_pass http://127.0.0.1:3000; }
- #sudo service nginx restart
+sudo yum -y install nginx
+#start nginx a startup
+sudo chkconfig nginx on
+# Must config reverse proxy to route 80 to 3000 port
+#sudo vi /etc/nginx/nginx.conf
+#location / { proxy_pass http://127.0.0.1:3000; }
+#sudo service nginx restart
  
 
 # Install nvm and node
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh | bash
-  source ~/.bashrc
-  nvm install --lts
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh | bash
+source ~/.bashrc
+nvm install --lts
 
 # Install Acme.sh
-  # clone repo
-  cd /tmp && git clone https://github.com/Neilpang/acme.sh.git
-  # get inside and install
-  cd /tmp/acme.sh && ./acme.sh --install
-  # remove tmp dir
-  cd ~/ && rm -rf /tmp/acme.sh
-  # restart bash
-  source ~/.bashrc
+# clone repo
+cd /tmp && git clone https://github.com/Neilpang/acme.sh.git
+# get inside and install
+cd /tmp/acme.sh && ./acme.sh --install
+# remove tmp dir
+cd ~/ && rm -rf /tmp/acme.sh
+# restart bash
+source ~/.bashrc
 
-  cd ~/.acme.sh && rm account.conf
-  cat > account.conf << EOF
-    export AWS_ACCESS_KEY_ID=$aws_key_id
-    export AWS_SECRET_ACCESS_KEY=$aws_key_password
-  EOF;
+# Create config file with keys
+cd ~/.acme.sh && rm account.conf
+cat > account.conf << EOF
+  export AWS_ACCESS_KEY_ID=$aws_key_id
+  export AWS_SECRET_ACCESS_KEY=$aws_key_password
+EOF
 
+# Test Letsencript wilcard issue
+acme.sh --test --issue --log --dns dns_aws -d "*.$domain" -d $domain
+
+# Delete test folders
+rm -rf ~/.acme.sh/*$domain
+
+# Now run the issuing command twice (it will fail on the first run) just changing –test to –force
+acme.sh --force --issue --log --dns dns_aws -d *.$domain -d $domain
+
+# Install the certificate in some sensible place as the directory structure of ~/.acme.sh may change in the future.
+mkdir $certs_dir && mkdir $certs_dir/*.$domain
+
+#SSL files
+cert_file=$certs_dir/*.$domain/*.$domain.cer
+key_file=$certs_dir/*.$domain/*.$domain.key
+fullchain_file=$certs_dir/*.$domain/fullchain.cer
+
+# Install certs
+acme.sh --install-cert -d *.$domain --cert-file cert_file --key-file key_file --fullchain-file fullchain_file
+
+#reload nginx
+service nginx reload
 
 # Install ZSH from source
 #  sudo yum -y install gcc
