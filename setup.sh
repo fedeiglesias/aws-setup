@@ -1,10 +1,13 @@
 
+# Install AWS Lightsail webserver with SSL cert
+
 #Route 53 API keys
-aws_key_id=AKIA6MVC6Y6XWN3MQ5HD
-aws_key_pass=DZqOf4Afm/KTQmwzK8RTCnGLYqSyB4n70y69EgzB
+echo '####################################################################'
+read -p 'AWS KEY ID: ' aws_key_id
+read -p 'AWS KEY PASSWORD: ' aws_key_password
+read -p 'DOMAIN' domain
+echo '####################################################################'
 
-
-# CentOS install in AWS
 
 # Update yum packages
   sudo yum -y update
@@ -29,21 +32,14 @@ aws_key_pass=DZqOf4Afm/KTQmwzK8RTCnGLYqSyB4n70y69EgzB
   nvm install --lts
 
 # Install Acme.sh with sudo access
-  #get sudo perms
-  sudo -i
-
   # clone repo
   cd /tmp && git clone https://github.com/Neilpang/acme.sh.git
   # get inside and install
-  cd /tmp/acme.sh && ./acme.sh --install
+  cd /tmp/acme.sh && sudo ./acme.sh --install
   # remove tmp dir
   rm -rf /tmp/acme.sh
   # restart bash
   source ~/.bashrc
-
-  exit
-
-  # Add AWS keys
 
 
 # Install ZSH from source
