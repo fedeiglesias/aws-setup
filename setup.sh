@@ -2,6 +2,11 @@
 
 # Show menu prompt
 echo '####################################################################'
+
+# Git & Git Hooks
+read -e -p "INSTALL GIT [n/y]: " -i "y" install_git
+read -e -p "INSTALL GOLANG (git hooks) [n/y]: " -i "y" install_golang
+
 read -e -p "INSTALL NGINX [n/y]: " -i "y" install_nginx
 read -e -p "INSTALL ACME.SH [n/y]: " -i "y" install_acmesh
 
@@ -21,7 +26,22 @@ sudo yum -y update
 sudo yum -y upgrade
 
 # Install wget and git
-sudo yum -y install git
+if [ $install_git == "y" ] 
+then
+  sudo yum -y install git
+fi
+
+#install Golang
+if [ $install_golang == "y" ] 
+then
+  # Get LTS version
+  GOLANG_VERSION="`wget -qO- https://golang.org/VERSION?m=text`"
+  cd /tmp
+  wget https://dl.google.com/go/$GOLANG_VERSION.linux-amd64.tar.gz
+  sudo tar -C /usr/local -xzf $GOLANG_VERSION.linux-amd64.tar.gz
+  export PATH=$PATH:/usr/local/go/bin
+  rm -rf $GOLANG_VERSION.linux-amd64.tar.gz
+fi
 
 # If nginx installed restart it
 if [ $install_nginx == "y" ] 
