@@ -1,9 +1,6 @@
+#!/bin/bash
 
-# Install AWS Lightsail webserver with SSL cert
-
-
-
-#Route 53 API keys
+# Show menu prompt
 echo '####################################################################'
 read -e -p "INSTALL NGINX [n/y]: " -i "y" install_nginx
 read -e -p "INSTALL ACME.SH [n/y]: " -i "y" install_acmesh
