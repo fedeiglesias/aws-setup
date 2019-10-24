@@ -46,7 +46,7 @@ source ~/.bashrc
 nvm install --lts
 
 # Install Acme.sh
-if install_acmesh == 'y'; then
+if install_acmesh == 'y'
 then
   # clone repo
   cd /tmp && git clone https://github.com/Neilpang/acme.sh.git
