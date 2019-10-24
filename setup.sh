@@ -9,7 +9,7 @@ read -e -p "INSTALL NGINX [n/y]: " -i "y" install_nginx
 read -e -p "INSTALL ACME.SH [n/y]: " -i "y" install_acmesh
 
 read -e -p "INSTALL LET'S ENCRIPT WILDCARD SSL (W/AWS)? [n/y]: " -i "n" install_letsencript_ssl
-if [ "$install_letsencript_ssl" == "y" ] 
+if [ $install_letsencript_ssl == "y" ] 
 then
   read -p 'AWS KEY ID: ' aws_key_id
   read -p 'AWS KEY PASSWORD: ' aws_key_password
@@ -27,7 +27,7 @@ sudo yum -y upgrade
 sudo yum -y install git
 
 # If nginx installed restart it
-if [ "$install_nginx" == "y" ] 
+if [ $install_nginx == "y" ] 
 then
   # Install nginx
   sudo yum -y install nginx
@@ -46,7 +46,7 @@ source ~/.bashrc
 nvm install --lts
 
 # Install Acme.sh
-if [ "$install_acmesh" == "y" ]
+if [ $install_acmesh == "y" ]
 then
   # clone repo
   cd /tmp && git clone https://github.com/Neilpang/acme.sh.git
@@ -59,7 +59,7 @@ then
 fi
 
 # Install Let's encrypt certificate
-if [ "$install_letsencript_ssl" == "y" ]
+if [ $install_letsencript_ssl == "y" ]
 then
   # Create config file with keys
   cd ~/.acme.sh && rm account.conf
@@ -91,7 +91,7 @@ EOF
   acme.sh --install-cert -d *.$domain --cert-file $cert_file --key-file $key_file --fullchain-file $fullchain_file
 
   # If nginx installed restart it
-  if [ "$install_nginx" == "y" ] 
+  if [ $install_nginx == "y" ] 
   then
     service nginx reload
   fi
