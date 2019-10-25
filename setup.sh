@@ -6,10 +6,10 @@ echo '####################################################################'
 read -e -p "MAIN PROJECT NAME: " -i "home" main_project_name
 read -e -p "IS MAIN PROJECT LINKED TO GIT REPO ? " -i "y" main_project_linked_to_git
 
-if [ $main_project_linked_to_git == "y" ] 
+if [ $main_project_linked_to_git == "y" ]
 then
   install_git="y"
-  read -e -p "MAIN PROJECT GIT (http for git clone): " -i "" main_project_git_repo
+  read -e -p "MAIN PROJECT GIT (http for git clone): " -i "y" main_project_git_repo
 fi
 
 # If user dont want to link main project to a git repo
