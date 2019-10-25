@@ -18,9 +18,28 @@ if [ $main_project_linked_to_git == "n" ] then
 fi
 
 # Golang & Webhook
-read -e -p "INSTALL GOLANG (for git hooks) [n/y]: " -i "y" install_golang
-if [ $install_golang == "y" ] then
-  read -e -p "INSTALL WEBHOOK (for git hooks) [n/y]: " -i "y" install_webhook
+read -e -p "YOU NEED SUPPORT FOR GITHUB HOOKS? [n/y]: " -i "y" webhooks_support
+if [ $webhooks_support == "y" ] then
+  echo "----------------------------------------------------------------------------------------"
+  echo "  Github have a nice feature called webhooks. With this feature you can send a"
+  echo "  message to your server when your git project have changes, so you can trigger a"
+  echo "  script that pull automatically from your repo and re run your app with the"
+  echo "  new changes. To start using webhooks, we need to do some things. Let get's started!"
+  echo "----------------------------------------------------------------------------------------"
+  echo ""
+  echo "    First, we need to create a PRIVATE repo that will contain our webhooks configuraration."
+  echo "    Go to your Github account, create a new repo, for example 'server-webhooks-config'."
+  echo "    Copy the SSL key and paste it here (git@github.com:username/repo-name.git): "
+  read -e -p "    > " -i "" webhooks_config_repo
+  echo ""
+  echo ""
+  echo "    Nice! ok, now we need a ssh key to connect with this repo from the server. To do it"
+  echo "    go to Github > Settings tab > Deploy keys and click to button 'Add Key'. It will appear"
+  echo "    a form, add a name, for example 'server-webhooks-config', make sure the checkbox"
+  echo "    is checked and in KEY textarea paste the next ssh key: "
+  echo ""
+  
+  install_golang='y'
 fi
 
 read -e -p "INSTALL NGINX [n/y]: " -i "y" install_nginx
@@ -70,7 +89,7 @@ fi
 # git remote add origin git@github.com:fedeiglesiasc/fedeiglesias.com.git
 
 #install Golang
-if [ $install_golang == "y" ] 
+if [ $webhooks_support == "y" ] 
 then
   # Get LTS version
   GOLANG_VERSION="`wget -qO- https://golang.org/VERSION?m=text`"
