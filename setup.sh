@@ -30,16 +30,16 @@ then
   echo "  new changes. To start using webhooks, we need to do some things. Let get's started!"
   echo "----------------------------------------------------------------------------------------"
   echo ""
-  echo "    First, we need to create a PRIVATE repo that will contain our webhooks configuraration."
-  echo "    Go to your Github account, create a new repo, for example 'server-webhooks-config'."
-  echo "    Copy the SSL key and paste it here (git@github.com:username/repo-name.git): "
+  echo "    | First, we need to create a PRIVATE repo that will contain our webhooks config."
+  echo "    | Go to your Github account, create a new repo, for example 'server-webhooks-config'."
+  echo "    | Copy the SSL key and paste it here (git@github.com:username/repo-name.git): "
   read -e -p "    > " -i "" webhooks_config_repo
   echo ""
   echo ""
-  echo "    Nice! ok, now we need a ssh key to connect with this repo from the server. To do it"
-  echo "    go to Github > Settings tab > Deploy keys and click to button 'Add Key'. It will appear"
-  echo "    a form, add a name, for example 'server-webhooks-config', make sure the checkbox"
-  echo "    is checked and in KEY textarea paste the next ssh key: "
+  echo "    | Nice! ok, now we need a ssh key to connect with this repo from server."
+  echo "    | Go to Github > Settings tab > Deploy keys and click button 'Add Key'."
+  echo "    | Add a name, for example 'server-webhooks' and check 'Allow write access'"
+  echo "    | Copy and paste the key in the textarea: "
   echo ""
 
   install_golang='y'
