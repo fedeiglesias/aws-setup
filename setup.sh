@@ -6,20 +6,23 @@ echo '####################################################################'
 read -e -p "MAIN PROJECT NAME: " -i "home" main_project_name
 read -e -p "IS MAIN PROJECT LINKED TO GIT REPO ? " -i "y" main_project_linked_to_git
 
-if [ $main_project_linked_to_git == "y" ] then
+if [ $main_project_linked_to_git == "y" ] 
+then
   install_git="y"
   read -e -p "MAIN PROJECT GIT (http for git clone): " -i "" main_project_git_repo
 fi
 
 # If user dont want to link main project to a git repo
 # ask him anyway if want to install git alone
-if [ $main_project_linked_to_git == "n" ] then
+if [ $main_project_linked_to_git == "n" ] 
+then
   read -e -p "INSTALL GIT [n/y]: " -i "y" install_git
 fi
 
 # Golang & Webhook
 read -e -p "YOU NEED SUPPORT FOR GITHUB HOOKS? [n/y]: " -i "y" webhooks_support
-if [ $webhooks_support == "y" ] then
+if [ $webhooks_support == "y" ] 
+then
   echo "----------------------------------------------------------------------------------------"
   echo "  Github have a nice feature called webhooks. With this feature you can send a"
   echo "  message to your server when your git project have changes, so you can trigger a"
@@ -38,7 +41,7 @@ if [ $webhooks_support == "y" ] then
   echo "    a form, add a name, for example 'server-webhooks-config', make sure the checkbox"
   echo "    is checked and in KEY textarea paste the next ssh key: "
   echo ""
-  
+
   install_golang='y'
 fi
 
