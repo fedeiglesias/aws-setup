@@ -1,5 +1,228 @@
 #!/bin/bash
 
+printLogo()
+{
+  echo ""
+  echo ""
+  echo "  ██████╗  ██████╗  ██████╗██╗  ██╗███████╗████████╗"
+  echo "  ██╔══██╗██╔═══██╗██╔════╝██║ ██╔╝██╔════╝╚══██╔══╝"
+  echo "  ██████╔╝██║   ██║██║     █████╔╝ █████╗     ██║ "
+  echo "  ██╔══██╗██║   ██║██║     ██╔═██╗ ██╔══╝     ██║ "
+  echo "  ██║  ██║╚██████╔╝╚██████╗██║  ██╗███████╗   ██║ "
+  echo "  ╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝   ╚═╝ "
+  echo ""
+}
+
+
+# COLORS
+red=$'\e[1;31m'
+green=$'\e[1;32m'
+yellow=$'\e[1;33m'
+blue=$'\e[1;34m'
+magenta=$'\e[1;35m'
+cyan=$'\e[1;36m'
+end=$'\e[0m'
+
+working()
+{
+  printf "\r [ ${blue}WORKING${end} ] "
+}
+
+ok()
+{
+  printf "\r [ ${green}OK${end} ] "
+}
+
+error()
+{
+  printf "\r [ ${red}ERROR${end} ] "
+}
+
+warning()
+{
+  printf "\r [ ${yellow}WARNING${end} ] "
+}
+
+nl()
+{
+  printf "                                \n"
+} 
+
+
+updateYUM() 
+{
+  # Update YUM
+  working && printf "Updating YUM ..."
+  sudo yum -y update 2>&1 >/dev/null
+  ok && printf "YUM is updated" && nl
+
+  # Upgrade YUM
+  working && printf "Upgrading YUM ..."
+  sudo yum -y upgrade 2>&1 >/dev/null
+  ok && printf "YUM is upgraded" && nl
+
+  #Remove orphan packages  
+  working && printf "Clean orphan packages ..."
+  sudo yum -y autoremove 2>&1 >/dev/null
+  ok && printf "YUM is clean" && nl
+}
+
+installGolang()
+{
+  # Install Golang
+  working && printf "Installing Golang ..."
+
+  {
+    # Get LTS version
+    GOLANG_VERSION="`wget -qO- https://golang.org/VERSION?m=text`"
+    # Move to tmp
+    cd /tmp
+    # Get installer
+    wget https://dl.google.com/go/$GOLANG_VERSION.linux-amd64.tar.gz --quiet
+    # decompress
+    sudo tar -C /usr/local -xzf $GOLANG_VERSION.linux-amd64.tar.gz
+    # install 
+    echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+    # remove tmp files
+    rm -rf $GOLANG_VERSION.linux-amd64.tar.gz
+    # move to home
+    cd ~/
+
+  } 2>/dev/null
+
+  # All go ok
+  ok && printf "Golang is installed" && nl
+}
+
+installWebhook4()
+{
+
+  # Install Nginx
+  installGit()
+
+  # Install Golang
+  installGolang()
+
+  # Install Webhook
+  working && printf "Installing Webhook ..."
+  go get github.com/adnanh/webhook 2>/dev/null
+  ok && printf "Webhook installed successfull" && nl
+
+  # Add webhook in crontab
+  #working && printf "Adding Webhook to Crontab ..."
+  # Command to add to crontab
+  #CRON_WEBHOOK_COMMAND="@reboot /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/hooks.json -ip '127.0.0.1'"
+  # Add to Crontab ONLY if not exist alredy and without show errors
+  #! (crontab -l 2>/dev/null | grep -q "$ND") && (crontab -l 2>/dev/null; echo $ND) | crontab -
+  # All go ok
+  #ok && printf "Webhook added to Crontab" && nl
+
+  # Add webhook in crontab
+  working && printf "Adding Webhook to UpStart ..."
+  # Add service to UpStart
+  sudo tee -a /etc/init/webhook.conf >/dev/null <<'EOF'
+      description "A Webhook server to run with Github"
+      author "Federico Iglesias Colombo"
+      start on runlevel [2345]
+      exec /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1'
+EOF
+
+  # Start service
+  sudo initctl start webhook
+  # All go ok
+  ok && printf "Webhook added to UpStart" && nl
+
+  # Check for port 9000
+  working && printf "Checking if port 9000 is used ..."
+  if lsof -Pi :9000 -sTCP:LISTEN -t 2>/dev/null ;
+  then
+    error && printf "Port 9000 is used" && nl
+  else
+    ok && printf "Port 9000 is free" && nl
+  fi
+}
+
+configWebhooks() 
+{
+  
+  # Add configure startup webhook project
+  working && printf "Config Webhooks main project ..."
+  
+  # Create directory structure
+  mkdir -p ~/webhooks 2>/dev/null
+  mkdir -p ~/webhooks/main 2>/dev/null
+  mkdir -p ~/webhooks/hooks 2>/dev/null
+
+  # Create main hook file
+  
+  cat > ~/webhooks/main/hook.json << EOF
+    [
+      {
+        "id": "webhooks", dsfsdf
+        "execute-command": "/home/$USER/webhooks/main/script.sh",
+        "command-working-directory": "/home/$USER/webhooks/hooks/",
+        "response-message": "Executing deploy script..."
+      }
+    ]
+EOF
+
+  # Create main shell script file
+  cat > ~/webhooks/main/script.sh << EOF
+    #!/bin/bash
+
+    git fetch --all
+    git checkout --force "origin/master"
+
+    # give permission to all hooks scripts
+    chmod +x ~/webhooks/hooks/*/script.sh
+
+    # Restart service webhooks to get changes
+EOF
+
+  # All go ok
+  ok && printf "Webhook main project configured" && nl
+}
+
+configSSHKeys1()
+{
+  # Add configure startup webhook project
+  working && printf "Config SSH Public Keys ..."
+  # Create keys dir
+  mkdir -p ~/.ssh/keys
+  # Add webhook in crontab
+  #CC="@reboot eval \"\$(ssh-agent -s)\" && for f in \$(ls ~/.ssh/keys/ --hide='*.pub'); do ssh-add ~/.ssh/keys/\$f; done"
+  #CC1="@reboot eval \" \$(ssh-agent -s)\" "
+  # Add to Crontab ONLY if not exist alredy and without show errors
+  #! (crontab -l 2>/dev/null | grep -q "$CC1") && (crontab -l 2>/dev/null; echo $CC1) | crontab -
+  # All go ok
+  ok && printf "SSH Public Keys configured" && nl
+}
+
+
+installGit()
+{
+  working && printf "Installing GIT ..."
+  sudo yum -y install git 2>/dev/null
+  ok && printf "GIT installed successfull" && nl
+}
+
+installNginx()
+{
+  # Install Nginx
+  working && printf "Installing Nginx ..."
+  sudo yum -y install nginx 2>/dev/null
+  # Add Nginx to startup
+  sudo chkconfig nginx on 2>/dev/null
+  # All go ok
+  ok && printf "Nginx installed successfull" && nl
+}
+
+configureWebhook()
+{
+}
+
+printLogo()
+
 # Show menu prompt
 echo '####################################################################'
 
@@ -65,9 +288,8 @@ mkdir ~/projects
 # create folder for main project
 mkdir ~/projects/$main_project_name
 
-# Update yum packages
-sudo yum -y update
-sudo yum -y upgrade
+#update & upgrade yum
+updateYum()
 
 # Install wget and git
 if [ $install_git == "y" ] 
@@ -94,29 +316,12 @@ fi
 #install Golang
 if [ $webhooks_support == "y" ] 
 then
-  # Get LTS version
-  GOLANG_VERSION="`wget -qO- https://golang.org/VERSION?m=text`"
-  # Move to tmp
-  cd /tmp
-  # Get installer
-  wget https://dl.google.com/go/$GOLANG_VERSION.linux-amd64.tar.gz
-  # decompress
-  sudo tar -C /usr/local -xzf $GOLANG_VERSION.linux-amd64.tar.gz
-  # install
-  export PATH=$PATH:/usr/local/go/bin
-  # remove tmp files
-  rm -rf $GOLANG_VERSION.linux-amd64.tar.gz
-  # move to home
-  cd ~/
+  installGolang
 
-  #install Golang
+  #install Webhooks
   if [ $install_webhook == "y" ] 
   then
-    # install webhook
-    go get github.com/adnanh/webhook
-    # create dir for webhooks
-    mkdir ~/webhooks
-    touch ~/webhooks/hooks.json
+    installWebhook
   fi
 fi
 
@@ -217,3 +422,5 @@ fi
 
 # Install PowerLevel10K
 #  git clone https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
+
+

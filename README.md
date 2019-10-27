@@ -71,7 +71,26 @@ EOF
   # write out current crontab
   crontab -l > mycron
   # echo new cron into cron file
-  echo "@reboot echo hello" >> mycron
+  echo "@reboot /home/ec2-user/go/bin/webhook -hooks /home/ec2-user/webhooks/hooks.json -ip "127.0.0.1" -verbose" >> mycron
   # install new cron file
   crontab mycron
   rm mycron
+
+
+wget https://github.com/emcrisostomo/fswatch/releases/download/1.9.3/fswatch-1.9.3.tar.gz
+tar -xvzf fswatch-1.9.3.tar.gz
+cd fswatch-1.9.3
+./configure
+make
+sudo make install 
+
+  # Add webhook in crontab
+  #working && printf "Adding Webhook to Crontab ..."
+  # Command to add to crontab
+  CC="@reboot eval \$(ssh-agent -s) && for f in $(ls ~/.ssh/keys/ --hide='*.pub'); do ssh-add ~/.ssh/keys/$f; done"
+  # Add to Crontab ONLY if not exist alredy and without show errors
+  #! (crontab -l 2>/dev/null | grep -q "$CC") && (crontab -l 2>/dev/null; echo $CC) | crontab -
+  # All go ok
+  #ok && printf "Webhook added to Crontab" && nl
+
+eval $(ssh-agent -s) && for f in $(ls ~/.ssh/keys/ --hide='*.pub'); do ssh-add ~/.ssh/keys/$f; done
