@@ -309,4 +309,4 @@ installNode()
 }
 
 
-printLogo()
+printLogo
