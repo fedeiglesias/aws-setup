@@ -4,14 +4,25 @@ printLogo()
 {
   echo ""
   echo ""
-  echo "  ██████╗  ██████╗  ██████╗██╗  ██╗███████╗████████╗"
-  echo "  ██╔══██╗██╔═══██╗██╔════╝██║ ██╔╝██╔════╝╚══██╔══╝"
-  echo "  ██████╔╝██║   ██║██║     █████╔╝ █████╗     ██║ "
-  echo "  ██╔══██╗██║   ██║██║     ██╔═██╗ ██╔══╝     ██║ "
-  echo "  ██║  ██║╚██████╔╝╚██████╗██║  ██╗███████╗   ██║ "
-  echo "  ╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝   ╚═╝ "
+  echo "  ██████╗   ██████╗   ██████╗ ██╗  ██╗ ███████╗ ████████╗"
+  echo "  ██╔══██╗ ██╔═══██╗ ██╔════╝ ██║ ██╔╝ ██╔════╝ ╚══██╔══╝"
+  echo "  ██████╔╝ ██║   ██║ ██║      █████╔╝  █████╗      ██║ "
+  echo "  ██╔══██╗ ██║   ██║ ██║      ██╔═██╗  ██╔══╝      ██║ "
+  echo "  ██║  ██║ ╚██████╔╝ ╚██████╗ ██║  ██╗ ███████╗    ██║ "
+  echo "  ╚═╝  ╚═╝  ╚═════╝   ╚═════╝ ╚═╝  ╚═╝ ╚══════╝    ╚═╝ "
   echo ""
 }
+
+# Variables Initialization
+
+
+# SSH
+ssh_dir="/home/$USER/.ssh"
+ssh_keys_dir="keys"
+
+# WEBHOOKS
+webhook_port=9000
+webhook_config_git_repo="git@github.com:fedeiglesiasc/server-webhooks.git"
 
 
 # COLORS
@@ -41,6 +52,11 @@ error()
 warning()
 {
   printf "\r [ ${yellow}WARNING${end} ] "
+}
+
+info()
+{
+  printf "\r [ ${cyan}INFO${end} ] "
 }
 
 nl()
@@ -94,9 +110,8 @@ installGolang()
   ok && printf "Golang is installed" && nl
 }
 
-installWebhook4()
+installWebhook()
 {
-
   # Install Nginx
   installGit()
 
@@ -108,14 +123,19 @@ installWebhook4()
   go get github.com/adnanh/webhook 2>/dev/null
   ok && printf "Webhook installed successfull" && nl
 
-  # Add webhook in crontab
-  #working && printf "Adding Webhook to Crontab ..."
-  # Command to add to crontab
-  #CRON_WEBHOOK_COMMAND="@reboot /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/hooks.json -ip '127.0.0.1'"
-  # Add to Crontab ONLY if not exist alredy and without show errors
-  #! (crontab -l 2>/dev/null | grep -q "$ND") && (crontab -l 2>/dev/null; echo $ND) | crontab -
-  # All go ok
-  #ok && printf "Webhook added to Crontab" && nl
+  # Create directory structure
+  mkdir -p ~/webhooks 2>/dev/null
+  mkdir -p ~/webhooks/hooks 2>/dev/null
+
+  # Check for port is used
+  working && printf "Checking if port $webhook_port is used ..."
+  if lsof -Pi :webhook_port -sTCP:LISTEN -t 2>/dev/null ;
+  then
+    error && printf "Port $webhook_port is used" && nl
+  else
+    ok && printf "Port $webhook_port is free" && nl
+  fi
+  #TODO ASK FOR OTHER PORT
 
   # Add webhook in crontab
   working && printf "Adding Webhook to UpStart ..."
@@ -131,22 +151,13 @@ EOF
   sudo initctl start webhook
   # All go ok
   ok && printf "Webhook added to UpStart" && nl
-
-  # Check for port 9000
-  working && printf "Checking if port 9000 is used ..."
-  if lsof -Pi :9000 -sTCP:LISTEN -t 2>/dev/null ;
-  then
-    error && printf "Port 9000 is used" && nl
-  else
-    ok && printf "Port 9000 is free" && nl
-  fi
 }
 
-configWebhooks() 
+configWebhooksFromGit() 
 {
   
   # Add configure startup webhook project
-  working && printf "Config Webhooks main project ..."
+  working && printf "Installing Feature: Set Webhooks from Git ..."
   
   # Create directory structure
   mkdir -p ~/webhooks 2>/dev/null
@@ -154,11 +165,10 @@ configWebhooks()
   mkdir -p ~/webhooks/hooks 2>/dev/null
 
   # Create main hook file
-  
   cat > ~/webhooks/main/hook.json << EOF
     [
       {
-        "id": "webhooks", dsfsdf
+        "id": "webhooks",
         "execute-command": "/home/$USER/webhooks/main/script.sh",
         "command-working-directory": "/home/$USER/webhooks/hooks/",
         "response-message": "Executing deploy script..."
@@ -179,11 +189,58 @@ EOF
     # Restart service webhooks to get changes
 EOF
 
+  # set permission to execute file
+  chmod +x ~/webhooks/main/script.sh
+
+  # Set remote repo to hooks dir
+  cd ~/webhooks/hooks && git init --quiet 2>/dev/null
+  git remote add origin $webhook_config_git_repo ~/ 2>/dev/null && cd ~/ 2>/dev/null
+
   # All go ok
-  ok && printf "Webhook main project configured" && nl
+  ok && printf "Feature created: Set Webhooks from Git" && nl
 }
 
-configSSHKeys1()
+createSSHKeysDir()
+{
+  {
+    # SSH dir
+    ssh_dir="/home/$USER/.ssh"
+
+    # if .ssh dir not exist create it 
+    mkdir -p $ssh_dir $ssh_dir/$ssh_keys_dir
+    # Home directory on the server should not be writable by others
+    chmod go-w /home/$USER
+    # SSH folder on the server needs 700 permissions: 
+    chmod 700 $ssh_dir $ssh_dir/$ssh_keys_dir
+    # Authorized_keys file needs 644 permissions: 
+    chmod 644 $ssh_dir/authorized_keys
+    # Make sure that user owns the files/folders and not root: 
+    chown $USER $ssh_dir/authorized_keys
+    chown $USER $ssh_dir $ssh_dir
+    # Restart SSH service
+    service ssh restart
+
+  } 2>/dev/null
+
+  # Put the generated public key (from ssh-keygen) in the user's authorized_keys file on the server
+}
+
+createSSHKey()
+{
+  # Create SSH KEY
+  working && printf "Generating SSH KEY ..."
+
+  # create ssh key 
+  yes y |ssh-keygen -f $ssh_dir/$ssh_keys_dir/id_$1 -N "" >/dev/null
+
+  # Inform public key
+  info && printf "SSH Keys created! here is your public key: " && nl
+
+  # Show it
+  cat $ssh_dir/$ssh_keys_dir/id_$1.pub
+}
+
+configSSHKeys()
 {
   # Add configure startup webhook project
   working && printf "Config SSH Public Keys ..."
@@ -217,210 +274,39 @@ installNginx()
   ok && printf "Nginx installed successfull" && nl
 }
 
-configureWebhook()
+
+installNVM()
 {
-}
+  #Install LTS version of NVM
+  working && printf "Installing NVM ..."
+  
+  # Support to get the latest version auto from source
+  sudo yum -y install epel-release 2>/dev/null
+  sudo yum -y install jq 2>/dev/null
 
-printLogo()
+  # LTS
+  VER=$(curl -s 'https://api.github.com/repos/nvm-sh/nvm/releases/latest' | jq -r '.tag_name') 2>/dev/null
 
-# Show menu prompt
-echo '####################################################################'
-
-read -e -p "MAIN PROJECT NAME: " -i "home" main_project_name
-read -e -p "IS MAIN PROJECT LINKED TO GIT REPO ? " -i "y" main_project_linked_to_git
-
-if [ $main_project_linked_to_git == "y" ]
-then
-  install_git="y"
-  read -e -p "MAIN PROJECT GIT (http for git clone): " -i "y" main_project_git_repo
-fi
-
-# If user dont want to link main project to a git repo
-# ask him anyway if want to install git alone
-if [ $main_project_linked_to_git == "n" ] 
-then
-  read -e -p "INSTALL GIT [n/y]: " -i "y" install_git
-fi
-
-# Golang & Webhook
-read -e -p "YOU NEED SUPPORT FOR GITHUB HOOKS? [n/y]: " -i "y" webhooks_support
-if [ $webhooks_support == "y" ] 
-then
-  echo "----------------------------------------------------------------------------------------"
-  echo "  Github have a nice feature called webhooks. With this feature you can send a"
-  echo "  message to your server when your git project have changes, so you can trigger a"
-  echo "  script that pull automatically from your repo and re run your app with the"
-  echo "  new changes. To start using webhooks, we need to do some things. Let get's started!"
-  echo "----------------------------------------------------------------------------------------"
-  echo ""
-  echo "    | First, we need to create a PRIVATE repo that will contain our webhooks config."
-  echo "    | Go to your Github account, create a new repo, for example 'server-webhooks-config'."
-  echo "    | Copy the SSL key and paste it here (git@github.com:username/repo-name.git): "
-  read -e -p "    > " -i "" webhooks_config_repo
-  echo ""
-  echo ""
-  echo "    | Nice! ok, now we need a ssh key to connect with this repo from server."
-  echo "    | Go to Github > Settings tab > Deploy keys and click button 'Add Key'."
-  echo "    | Add a name, for example 'server-webhooks' and check 'Allow write access'"
-  echo "    | Copy and paste the key in the textarea: "
-  echo ""
-
-  install_golang='y'
-fi
-
-read -e -p "INSTALL NGINX [n/y]: " -i "y" install_nginx
-read -e -p "INSTALL ACME.SH [n/y]: " -i "y" install_acmesh
-
-read -e -p "INSTALL LET'S ENCRIPT WILDCARD SSL (W/AWS)? [n/y]: " -i "n" install_letsencript_ssl
-if [ $install_letsencript_ssl == "y" ] 
-then
-  read -p 'AWS KEY ID: ' aws_key_id
-  read -p 'AWS KEY PASSWORD: ' aws_key_password
-  read -e -p "DOMAIN: " -i "fedeiglesias.com" domain
-  read -e -p "CERT DIRECTORY: " -i "~/ssl" certs_dir
-fi
-
-echo '####################################################################'
-
-# create folder for projects
-mkdir ~/projects
-
-# create folder for main project
-mkdir ~/projects/$main_project_name
-
-#update & upgrade yum
-updateYum()
-
-# Install wget and git
-if [ $install_git == "y" ] 
-then
-  sudo yum -y install git
-
-  #link main project to git repo
-  if [ $main_project_linked_to_git == "y" ] 
-  then
-    # move to project dir
-    cd ~/projects/$main_project_name
-    # init git repo & add remote origin
-    git init && git remote add origin $main_project_git_repo
-    #move to home
-    cd ~/
-  fi
-fi
-
-
-
-# git init
-# git remote add origin git@github.com:fedeiglesiasc/fedeiglesias.com.git
-
-#install Golang
-if [ $webhooks_support == "y" ] 
-then
-  installGolang
-
-  #install Webhooks
-  if [ $install_webhook == "y" ] 
-  then
-    installWebhook
-  fi
-fi
-
-
-
-
-
-
-# If nginx installed restart it
-if [ $install_nginx == "y" ] 
-then
-  # Install nginx
-  sudo yum -y install nginx
-  #start nginx a startup
-  sudo chkconfig nginx on
-  # Must config reverse proxy to route 80 to 3000 port
-  #sudo vi /etc/nginx/nginx.conf
-  #location / { proxy_pass http://127.0.0.1:3000; }
-  #sudo service nginx restart
-fi
-
-
-# Install nvm and node
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh | bash
-source ~/.bashrc
-nvm install --lts
-
-# Install Acme.sh
-if [ $install_acmesh == "y" ]
-then
-  # clone repo
-  cd /tmp && git clone https://github.com/Neilpang/acme.sh.git
-  # get inside and install
-  cd /tmp/acme.sh && ./acme.sh --install
-  # remove tmp dir
-  cd ~/ && rm -rf /tmp/acme.sh
+  # Install nvm
+  curl --silent --output /dev/null https://raw.githubusercontent.com/nvm-sh/nvm/$VER/install.sh | bash 
+  
   # restart bash
   source ~/.bashrc
-fi
 
-# Install Let's encrypt certificate
-if [ $install_letsencript_ssl == "y" ]
-then
-  # Create config file with keys
-  cd ~/.acme.sh && rm account.conf
-  cat > account.conf << EOF
-    export AWS_ACCESS_KEY_ID=$aws_key_id
-    export AWS_SECRET_ACCESS_KEY=$aws_key_password
-EOF
-  cd ~/
+  # All go ok
+  ok && printf "NVM installed successfull" && nl
+}
 
-  # Install the certificate in some sensible place as the directory structure of ~/.acme.sh may change in the future.
-  mkdir $certs_dir && mkdir $certs_dir/*.$domain
+installNode()
+{
+  # Install LTS version of Node
+  working && printf "Installing Node ..."
 
-  # Test Letsencript wilcard issue
-  acme.sh --test --issue --log --dns dns_aws -d "*.$domain" -d $domain
+  nvm install --lts 2>/dev/null
 
-  # Delete test folders
-  # rm -rf ~/.acme.sh/*$domain
-
-  # Now run the issuing command twice (it will fail on the first run) just changing –test to –force
-  # acme.sh --force --issue --log --dns dns_aws -d *.$domain -d $domain
+  # All go ok
+  ok && printf "Node installed successfull" && nl
+}
 
 
-  #SSL files
-  cert_file=$certs_dir/*.$domain/*.$domain.cer
-  key_file=$certs_dir/*.$domain/*.$domain.key
-  fullchain_file=$certs_dir/*.$domain/fullchain.cer
-
-  # Install certs
-  acme.sh --install-cert -d *.$domain --cert-file $cert_file --key-file $key_file --fullchain-file $fullchain_file
-
-  # If nginx installed restart it
-  if [ $install_nginx == "y" ] 
-  then
-    service nginx reload
-  fi
-fi
-
-
-
-# Install ZSH from source
-#  sudo yum -y install gcc
-#  sudo yum -y install ncurses-devel
-#  sudo yum -y install wget
-  
-#  wget http://www.zsh.org/pub/zsh-5.7.1.tar.xz -P ~/ && tar xf ~/zsh-5.7.1.tar.xz && cd ~/zsh-5.7.1
-#  ./configure && make && sudo make install
-#  sudo chsh -s /usr/local/bin/zsh
-
-#  rm -rf ~/zsh-5.7.1
-#  rm ~/zsh-5.7.1.tar.xz
-
-# Install Oh my ZSH
-#  git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
-#  cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
-#  cp ~/.zshrc ~/.zshrc.orig
-
-# Install PowerLevel10K
-#  git clone https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
-
-
+printLogo()
