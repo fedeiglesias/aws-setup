@@ -310,3 +310,7 @@ installNode()
 
 
 printLogo
+
+updateYUM
+
+installWebhook
