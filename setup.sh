@@ -113,10 +113,10 @@ installGolang()
 installWebhook()
 {
   # Install Nginx
-  installGit()
+  installGit
 
   # Install Golang
-  installGolang()
+  installGolang
 
   # Install Webhook
   working && printf "Installing Webhook ..."
