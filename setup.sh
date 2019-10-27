@@ -148,7 +148,7 @@ installWebhook()
 EOF
 
   # Start service
-  sudo initctl start webhook
+  sudo initctl start webhook 2>&1 >/dev/null
   # All go ok
   ok && printf "Webhook added to UpStart" && nl
 }
@@ -313,4 +313,10 @@ printLogo
 
 updateYUM
 
+installNVM
+
+installNginx
+
 installWebhook
+
+configWebhooksFromGit
