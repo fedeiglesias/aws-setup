@@ -259,7 +259,7 @@ configSSHKeys()
 installGit()
 {
   working && printf "Installing GIT ..."
-  sudo yum -y install git 2>/dev/null
+  sudo yum -y install git 2>&1 >/dev/null
   ok && printf "GIT installed successfull" && nl
 }
 
@@ -267,9 +267,9 @@ installNginx()
 {
   # Install Nginx
   working && printf "Installing Nginx ..."
-  sudo yum -y install nginx 2>/dev/null
+  sudo yum -y install nginx 2>&1 >/dev/null
   # Add Nginx to startup
-  sudo chkconfig nginx on 2>/dev/null
+  sudo chkconfig nginx on 2>&1 >/dev/null
   # All go ok
   ok && printf "Nginx installed successfull" && nl
 }
