@@ -149,6 +149,7 @@ EOF
 
   # Start service
   sudo initctl start webhook 2>&1 >/dev/null
+
   # All go ok
   ok && printf "Webhook added to UpStart" && nl
 }
@@ -196,16 +197,19 @@ EOF
   cd ~/webhooks/hooks && git init --quiet 2>/dev/null
   git remote add origin $webhook_config_git_repo ~/ 2>/dev/null && cd ~/ 2>/dev/null
 
+  
+
   # All go ok
   ok && printf "Feature created: Set Webhooks from Git" && nl
 }
 
 createSSHKeysDir()
 {
+  
+  # Create SSH KEY
+  working && printf "Seting SSH dir structure and perms ..."
+  
   {
-    # SSH dir
-    ssh_dir="/home/$USER/.ssh"
-
     # if .ssh dir not exist create it 
     mkdir -p $ssh_dir $ssh_dir/$ssh_keys_dir
     # Home directory on the server should not be writable by others
@@ -222,7 +226,8 @@ createSSHKeysDir()
 
   } 2>/dev/null
 
-  # Put the generated public key (from ssh-keygen) in the user's authorized_keys file on the server
+  # All go ok
+  ok && printf "Set SSH dir structure and perms" && nl
 }
 
 createSSHKey()
@@ -238,6 +243,30 @@ createSSHKey()
 
   # Show it
   cat $ssh_dir/$ssh_keys_dir/id_$1.pub
+}
+
+SSHAutoloadKeys()
+{
+  # Ensure dir st
+  createSSHKeysDir
+
+  # Create SSH KEY
+  working && printf "Seting Autoload SSH Keys at login ..."
+
+  # If file do not exit create
+  touch ~/.bash_profile
+
+  # Command to add
+  initCommand="eval \"\$(ssh-agent -s >/dev/null)\" && for f in $(ls $ssh_dir/$ssh_keys_dir --hide='*.pub'); do ssh-add $ssh_dir/$ssh_keys_dir/\$f; done"
+
+  # If autoload not exist alredy
+  if ! grep -q initCommand ~/.bash_profile; then
+    echo "# Run SSH agent and load all keys" >> ~/.bash_profile
+    echo initCommand >> ~/.bash_profile
+  fi
+
+  # All go ok
+  ok && printf "Set Autoload SSH Keys at login" && nl
 }
 
 configSSHKeys()
