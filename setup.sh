@@ -74,8 +74,25 @@ waitYUMFinish()
 {
   while [ -f $YUM_LOCK_FILE ]
   do
-    cat $YUM_LOCK_FILE
+  if pgrep -x "yum" > /dev/null
+
     sleep 3
+  done
+}
+
+checkYumIsRunning()
+{
+  RUNING=true
+  while [ $RUNING == true ]
+  do
+    if pgrep -x "yum" > /dev/null
+    then
+      sleep 2 
+      RUNING=true
+    else
+      echo "not running"
+      RUNING=false
+    fi
   done
 }
 
@@ -84,19 +101,19 @@ updateYUM()
   # Update YUM
   working && printf "Updating YUM ..."
   sudo yum -y -q update >$YUM_OUTPUT_FILE
-  waitYUMFinish
+  checkYumIsRunning
   ok && printf "YUM is updated" && nl
 
   # Upgrade YUM
   working && printf "Upgrading YUM ..."
   sudo yum -y -q upgrade >$YUM_OUTPUT_FILE
-  waitYUMFinish
+  checkYumIsRunning
   ok && printf "YUM is upgraded" && nl
 
   #Remove orphan packages  
   working && printf "Clean orphan packages ..."
   sudo yum -y -q autoremove >$YUM_OUTPUT_FILE
-  waitYUMFinish
+  checkYumIsRunning
   ok && printf "YUM is clean" && nl
 }
 
