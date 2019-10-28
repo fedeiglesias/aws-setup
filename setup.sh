@@ -68,12 +68,6 @@ nl()
   printf "                                \n"
 } 
 
-# Bug: commands do not
-# wait YUM to finish
-waitYUMFinish()
-{
-
-}
 
 checkYumIsRunning()
 {
