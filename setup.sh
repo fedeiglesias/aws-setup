@@ -17,6 +17,7 @@ printLogo()
 
 # Yum output file
 YUM_OUTPUT_FILE='/tmp/yum-out'
+YUM_LOCK_FILE='/var/run/yum.pid'
 
 # SSH
 SSH_DIR="/home/$USER/.ssh"
@@ -25,6 +26,7 @@ SSH_KEYS_DIR="keys"
 # WEBHOOKS
 WEBHOOK_PORT=9000
 WEBHOOKS_CONFIG_REPO="git@github.com:fedeiglesiasc/server-webhooks.git"
+
 
 
 # COLORS
@@ -66,25 +68,34 @@ nl()
   printf "                                \n"
 } 
 
+# Bug: commands do not
+# wait YUM to finish
+waitYUMFinish()
+{
+  while [ -f $YUM_LOCK_FILE ]
+  do
+    sleep 1
+  done
+}
 
 updateYUM() 
 {
   # Update YUM
   working && printf "Updating YUM ..."
   sudo yum -y -q update >$YUM_OUTPUT_FILE
-  sleep 60
+  waitYUMFinish
   ok && printf "YUM is updated" && nl
 
   # Upgrade YUM
   working && printf "Upgrading YUM ..."
   sudo yum -y -q upgrade >$YUM_OUTPUT_FILE
-  sleep 60
+  waitYUMFinish
   ok && printf "YUM is upgraded" && nl
 
   #Remove orphan packages  
   working && printf "Clean orphan packages ..."
   sudo yum -y -q autoremove >$YUM_OUTPUT_FILE
-  sleep 60
+  waitYUMFinish
   ok && printf "YUM is clean" && nl
 }
 

@@ -1,6 +1,6 @@
 # aws-setup
 
-run `source <(curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master/setup.sh?token=AFC7YUPXA5UEODSK4LNOGZC5W23KQ)`
+run `source <(curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master/setup.sh?token=AFC7YUK3YF43EBJEYIWD6RS5W25L2)`
 
 Github have a nice feature called webhooks. With this feature you can send a 
 message to our server when your project have changes, so you can trigger a 
@@ -9,6 +9,8 @@ new changes. To start using webhooks, we need to do some things. Let get's start
 First, we need to create a PRIVATE repo that will contain our webhooks configuraration.
 Copy the SSL key and paste it here (git@github.com:username/repo-name.git): 
 
+
+https://github.com/fedeiglesiasc/aws-setup/blob/master/setup.sh
 
 # Pasos para instalar webhooks
   1. Instalar Golang
