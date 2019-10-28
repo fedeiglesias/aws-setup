@@ -260,9 +260,11 @@ SSHAutoloadKeys()
   initCommand="eval \"\$(ssh-agent -s >/dev/null)\" && for f in $(ls $ssh_dir/$ssh_keys_dir --hide='*.pub'); do ssh-add $ssh_dir/$ssh_keys_dir/\$f; done"
 
   # If autoload not exist alredy
-  if ! grep -q initCommand ~/.bash_profile; then
-    echo "# Run SSH agent and load all keys" >> ~/.bash_profile
-    echo initCommand >> ~/.bash_profile
+  if ! grep -q initCommand ~/.bash_profile; the
+    # Add title ;)
+    echo -e "\n# Run SSH agent and load all keys" >> ~/.bash_profile
+    # Add command
+    echo $initCommand >> ~/.bash_profile
   fi
 
   # All go ok
@@ -343,6 +345,10 @@ printLogo
 updateYUM
 
 installNVM
+
+installNode
+
+SSHAutoloadKeys
 
 installNginx
 
