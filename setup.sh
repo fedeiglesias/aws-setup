@@ -26,6 +26,7 @@ SSH_KEYS_DIR="keys"
 # WEBHOOKS
 WEBHOOK_PORT=9000
 WEBHOOKS_CONFIG_REPO="git@github.com:fedeiglesiasc/server-webhooks.git"
+WEBHOOKS_CONFIG_KEY_NAME="webhooks_config"
 
 
 
@@ -145,7 +146,7 @@ installWebhook()
   # Install Webhook
   working && printf "Installing Webhook ..."
   go get github.com/adnanh/webhook 2>/dev/null
-  ok && printf "Webhook installed successfull" && nl
+  ok && printf "Webhook installed" && nl
 
   # Create directory structure
   mkdir -p ~/webhooks 2>/dev/null
@@ -224,6 +225,9 @@ EOF
 
   # All go ok
   ok && printf "Feature created: Set Webhooks from Git" && nl
+
+  # Create SSH Keys for this feature
+  createSSHKey $WEBHOOKS_CONFIG_KEY_NAME
 }
 
 createSSHKeysDir()
@@ -259,7 +263,7 @@ createSSHKey()
   working && printf "Generating SSH KEY ..."
 
   # create ssh key 
-  yes y |ssh-keygen -f $SSH_DIR/$SSH_KEYS_DIR/id_$1 -N "" >/dev/null
+  yes y | ssh-keygen -f $SSH_DIR/$SSH_KEYS_DIR/id_$1 -N "" >/dev/null
 
   # Inform public key
   info && printf "SSH Keys created! here is your public key: " && nl
@@ -317,7 +321,7 @@ installGit()
 {
   working && printf "Installing GIT ..."
   sudo yum -y install git >$YUM_OUTPUT_FILE && waitYUM
-  ok && printf "GIT installed successfull" && nl
+  ok && printf "GIT installed" && nl
 }
 
 installNginx()
@@ -328,7 +332,7 @@ installNginx()
   # Add Nginx to startup
   sudo chkconfig nginx on 2>&1 >/dev/null
   # All go ok
-  ok && printf "Nginx installed successfull" && nl
+  ok && printf "Nginx installed" && nl
 }
 
 
@@ -351,7 +355,7 @@ installNVM()
   source ~/.bashrc
 
   # All go ok
-  ok && printf "NVM installed successfull" && nl
+  ok && printf "NVM installed" && nl
 }
 
 installNode()
@@ -362,7 +366,7 @@ installNode()
   nvm install --lts >/dev/null 2>&1
 
   # All go ok
-  ok && printf "Node installed successfull" && nl
+  ok && printf "Node installed" && nl
 }
 
 
@@ -373,6 +377,8 @@ updateYUM
 installNVM
 
 installNode
+
+createSSHKeysDir
 
 SSHAutoloadKeys
 
