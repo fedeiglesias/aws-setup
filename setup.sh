@@ -281,8 +281,8 @@ installNVM()
   working && printf "Installing NVM ..."
   
   # Support to get the latest version auto from source
-  sudo yum -y install epel-release 2>/dev/null
-  sudo yum -y install jq 2>/dev/null
+  sudo yum -y install epel-release 2>&1 >/dev/null
+  sudo yum -y install jq 2>&1 >/dev/null
 
   # LTS
   VER=$(curl -s 'https://api.github.com/repos/nvm-sh/nvm/releases/latest' | jq -r '.tag_name') 2>/dev/null
@@ -291,7 +291,7 @@ installNVM()
   curl --silent --output /dev/null https://raw.githubusercontent.com/nvm-sh/nvm/$VER/install.sh | bash 
   
   # restart bash
-  source ~/.bashrc
+  source ~/.bashrc 
 
   # All go ok
   ok && printf "NVM installed successfull" && nl
@@ -302,7 +302,7 @@ installNode()
   # Install LTS version of Node
   working && printf "Installing Node ..."
 
-  nvm install --lts 2>/dev/null
+  nvm install --lts >/dev/null 2>&1
 
   # All go ok
   ok && printf "Node installed successfull" && nl
