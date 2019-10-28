@@ -168,12 +168,16 @@ installWebhook()
   # Add webhook in crontab
   working && printf "Adding Webhook to UpStart ..."
   # Add service to UpStart
-  sudo tee -a /etc/init/webhook.conf >/dev/null <<'EOF'
+  sudo tee -a /etc/init/webhook.conf >/dev/null <<EOF
       description "A Webhook server to run with Github"
       author "Federico Iglesias Colombo"
-      start on runlevel [2345]
+      start on started sshd
+      stop on runlevel [!2345]
       exec /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1'
 EOF
+
+  # Reload configuration
+  sudo initctl reload-configuration 2>&1 >/dev/null
 
   # Start service
   sudo initctl start webhook 2>&1 >/dev/null
