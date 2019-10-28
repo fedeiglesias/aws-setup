@@ -128,6 +128,8 @@ installGolang()
     rm -rf $GOLANG_VERSION.linux-amd64.tar.gz
     # move to home
     cd ~/
+    # restart bash
+    source ~/.bashrc
 
   } 2>/dev/null
 
