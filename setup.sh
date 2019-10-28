@@ -176,11 +176,15 @@ installWebhook()
       exec /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1'
 EOF
 
-  # Reload configuration
-  sudo initctl reload-configuration >/dev/null
+  
+  {
+    # Reload configuration
+    sudo initctl reload-configuration
 
-  # Start service
-  sudo initctl start webhook >/dev/null
+    # Start service
+    sudo initctl start webhook
+
+  } 2>/dev/null
 
   # All go ok
   ok && printf "Webhook added to UpStart" && nl
