@@ -221,7 +221,7 @@ EOF
 
   # Set remote repo to hooks dir
   cd ~/webhooks/hooks && git init --quiet 2>/dev/null
-  git remote add origin $WEBHOOKS_CONFIG_REPO ~/ 2>/dev/null && cd ~/ 2>/dev/null
+  git remote add origin $WEBHOOKS_CONFIG_REPO 2>/dev/null && cd ~/ 2>/dev/null
 
   # All go ok
   ok && printf "Feature created: Set Webhooks from Git" && nl
@@ -277,9 +277,6 @@ createSSHKey()
 
 SSHAutoloadKeys()
 {
-  # Ensure dir st
-  createSSHKeysDir
-
   # Create SSH KEY
   working && printf "Seting Autoload SSH Keys at login ..."
 
@@ -291,7 +288,7 @@ SSHAutoloadKeys()
   COMMAND="{ [ -z \"\$SSH_AUTH_SOCK\" ] &&"
   COMMAND="$COMMAND eval \"\$(ssh-agent -s)\" && "
   COMMAND="$COMMAND for f in \$(ls $SSH_DIR/$SSH_KEYS_DIR --hide='*.pub'); do ssh-add $SSH_DIR/$SSH_KEYS_DIR/\$f; done } &>/dev/null"
-
+  
   # If autoload not exist alredy
   if ! grep -q "$COMMAND_TITLE" ~/.bash_profile; then
     # Add title ;)
@@ -311,6 +308,9 @@ SSHAutoloadKeys()
 
 loadAllKeys()
 {
+  # Start SSH Auth agent
+  eval "$(ssh-agent -s)" &>/dev/null
+  # Load All keys
   for f in $(ls $SSH_DIR/$SSH_KEYS_DIR --hide='*.pub'); do 
     ssh-add $SSH_DIR/$SSH_KEYS_DIR/$f &>/dev/null; 
   done

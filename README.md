@@ -1,6 +1,6 @@
 # aws-setup
 
-run `source <(curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master/setup.sh?token=AFC7YUKL7GFFRIJKTDQWQ4C5W36YK)`
+run `source <(curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master/setup.sh?token=AFC7YULUCVJ3LDSHYBMCPMC5W4A72)`
 
 Github have a nice feature called webhooks. With this feature you can send a 
 message to our server when your project have changes, so you can trigger a 
