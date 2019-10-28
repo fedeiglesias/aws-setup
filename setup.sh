@@ -72,12 +72,7 @@ nl()
 # wait YUM to finish
 waitYUMFinish()
 {
-  while [ -f $YUM_LOCK_FILE ]
-  do
-  if pgrep -x "yum" > /dev/null
 
-    sleep 3
-  done
 }
 
 checkYumIsRunning()
