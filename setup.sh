@@ -15,6 +15,8 @@ printLogo()
 
 # Variables Initialization
 
+# Yum output file
+YUM_OUTPUT_FILE='/tmp/yum-out'
 
 # SSH
 ssh_dir="/home/$USER/.ssh"
@@ -69,17 +71,17 @@ updateYUM()
 {
   # Update YUM
   working && printf "Updating YUM ..."
-  sudo yum -y update 2>&1 >/dev/null
+  sudo yum -y -q update >$YUM_OUTPUT_FILE
   ok && printf "YUM is updated" && nl
 
   # Upgrade YUM
   working && printf "Upgrading YUM ..."
-  sudo yum -y upgrade 2>&1 >/dev/null
+  sudo yum -y -q upgrade >$YUM_OUTPUT_FILE
   ok && printf "YUM is upgraded" && nl
 
   #Remove orphan packages  
   working && printf "Clean orphan packages ..."
-  sudo yum -y autoremove 2>&1 >/dev/null
+  sudo yum -y -q autoremove >$YUM_OUTPUT_FILE
   ok && printf "YUM is clean" && nl
 }
 
@@ -271,26 +273,11 @@ SSHAutoloadKeys()
   ok && printf "Set Autoload SSH Keys at login" && nl
 }
 
-configSSHKeys()
-{
-  # Add configure startup webhook project
-  working && printf "Config SSH Public Keys ..."
-  # Create keys dir
-  mkdir -p ~/.ssh/keys
-  # Add webhook in crontab
-  #CC="@reboot eval \"\$(ssh-agent -s)\" && for f in \$(ls ~/.ssh/keys/ --hide='*.pub'); do ssh-add ~/.ssh/keys/\$f; done"
-  #CC1="@reboot eval \" \$(ssh-agent -s)\" "
-  # Add to Crontab ONLY if not exist alredy and without show errors
-  #! (crontab -l 2>/dev/null | grep -q "$CC1") && (crontab -l 2>/dev/null; echo $CC1) | crontab -
-  # All go ok
-  ok && printf "SSH Public Keys configured" && nl
-}
-
 
 installGit()
 {
   working && printf "Installing GIT ..."
-  sudo yum -y install git 2>&1 >/dev/null
+  sudo yum -y -q install git >$YUM_OUTPUT_FILE
   ok && printf "GIT installed successfull" && nl
 }
 
@@ -298,7 +285,7 @@ installNginx()
 {
   # Install Nginx
   working && printf "Installing Nginx ..."
-  sudo yum -y install nginx 2>&1 >/dev/null
+  sudo yum -y -q install nginx >$YUM_OUTPUT_FILE
   # Add Nginx to startup
   sudo chkconfig nginx on 2>&1 >/dev/null
   # All go ok
@@ -312,17 +299,17 @@ installNVM()
   working && printf "Installing NVM ..."
   
   # Support to get the latest version auto from source
-  sudo yum -y install epel-release 2>&1 >/dev/null
-  sudo yum -y install jq 2>&1 >/dev/null
+  sudo yum -y -q install epel-release >$YUM_OUTPUT_FILE
+  sudo yum -y -q install jq >$YUM_OUTPUT_FILE
 
   # LTS
-  VER=$(curl -s 'https://api.github.com/repos/nvm-sh/nvm/releases/latest' | jq -r '.tag_name') 2>/dev/null
+  VER_LTS=$(curl -s 'https://api.github.com/repos/nvm-sh/nvm/releases/latest' | jq -r '.tag_name') 2>/dev/null
 
   # Install nvm
-  curl --silent --output /dev/null https://raw.githubusercontent.com/nvm-sh/nvm/$VER/install.sh | bash 
+  curl --silent --output /dev/null https://raw.githubusercontent.com/nvm-sh/nvm/$VER_LTS/install.sh | bash 
   
   # restart bash
-  source ~/.bashrc 
+  source ~/.bashrc
 
   # All go ok
   ok && printf "NVM installed successfull" && nl
