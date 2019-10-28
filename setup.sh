@@ -99,13 +99,11 @@ updateYUM()
   # Upgrade YUM
   working && printf "Upgrading YUM ..."
   sudo yum -y upgrade >$YUM_OUTPUT_FILE && waitYUM
-  checkYumIsRunning
   ok && printf "YUM is upgraded" && nl
 
   #Remove orphan packages  
   working && printf "Clean orphan packages ..."
   sudo yum -y autoremove >$YUM_OUTPUT_FILE && waitYUM
-  checkYumIsRunning
   ok && printf "YUM is clean" && nl
 }
 
