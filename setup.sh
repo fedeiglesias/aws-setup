@@ -69,17 +69,21 @@ nl()
 } 
 
 
-checkYumIsRunning()
+# When Yum output goes to a file
+# YUM keep running in background and
+# continue the execution. This function
+# wait until yum process stopy running
+# and then continue
+waitYUM()
 {
   RUNING=true
   while [ $RUNING == true ]
   do
     if pgrep -x "yum" > /dev/null
     then
-      sleep 2 
+      sleep 2
       RUNING=true
     else
-      echo "not running"
       RUNING=false
     fi
   done
@@ -89,19 +93,18 @@ updateYUM()
 {
   # Update YUM
   working && printf "Updating YUM ..."
-  sudo yum -y -q update >$YUM_OUTPUT_FILE
-  checkYumIsRunning
+  sudo yum -y update >$YUM_OUTPUT_FILE && waitYUM
   ok && printf "YUM is updated" && nl
 
   # Upgrade YUM
   working && printf "Upgrading YUM ..."
-  sudo yum -y -q upgrade >$YUM_OUTPUT_FILE
+  sudo yum -y upgrade >$YUM_OUTPUT_FILE && waitYUM
   checkYumIsRunning
   ok && printf "YUM is upgraded" && nl
 
   #Remove orphan packages  
   working && printf "Clean orphan packages ..."
-  sudo yum -y -q autoremove >$YUM_OUTPUT_FILE
+  sudo yum -y autoremove >$YUM_OUTPUT_FILE && waitYUM
   checkYumIsRunning
   ok && printf "YUM is clean" && nl
 }
@@ -297,7 +300,7 @@ SSHAutoloadKeys()
 installGit()
 {
   working && printf "Installing GIT ..."
-  sudo yum -y -q install git >$YUM_OUTPUT_FILE
+  sudo yum -y install git >$YUM_OUTPUT_FILE && waitYUM
   ok && printf "GIT installed successfull" && nl
 }
 
@@ -305,7 +308,7 @@ installNginx()
 {
   # Install Nginx
   working && printf "Installing Nginx ..."
-  sudo yum -y -q install nginx >$YUM_OUTPUT_FILE
+  sudo yum -y install nginx >$YUM_OUTPUT_FILE && waitYUM
   # Add Nginx to startup
   sudo chkconfig nginx on 2>&1 >/dev/null
   # All go ok
@@ -319,8 +322,8 @@ installNVM()
   working && printf "Installing NVM ..."
   
   # Support to get the latest version auto from source
-  sudo yum -y -q install epel-release >$YUM_OUTPUT_FILE
-  sudo yum -y -q install jq >$YUM_OUTPUT_FILE
+  sudo yum -y install epel-release >$YUM_OUTPUT_FILE && waitYUM
+  sudo yum -y install jq >$YUM_OUTPUT_FILE && waitYUM
 
   # LTS
   VER_LTS=$(curl -s 'https://api.github.com/repos/nvm-sh/nvm/releases/latest' | jq -r '.tag_name') 2>/dev/null
