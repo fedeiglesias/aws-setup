@@ -19,12 +19,12 @@ printLogo()
 YUM_OUTPUT_FILE='/tmp/yum-out'
 
 # SSH
-ssh_dir="/home/$USER/.ssh"
-ssh_keys_dir="keys"
+SSH_DIR="/home/$USER/.ssh"
+SSH_KEYS_DIR="keys"
 
 # WEBHOOKS
-webhook_port=9000
-webhook_config_git_repo="git@github.com:fedeiglesiasc/server-webhooks.git"
+WEBHOOK_PORT=9000
+WEBHOOKS_CONFIG_REPO="git@github.com:fedeiglesiasc/server-webhooks.git"
 
 
 # COLORS
@@ -130,13 +130,14 @@ installWebhook()
   mkdir -p ~/webhooks/hooks 2>/dev/null
 
   # Check for port is used
-  working && printf "Checking if port $webhook_port is used ..."
-  if lsof -Pi :webhook_port -sTCP:LISTEN -t 2>/dev/null ;
+  working && printf "Checking if port $WEBHOOK_PORT is used ..."
+  if lsof -Pi :WEBHOOK_PORT -sTCP:LISTEN -t 2>/dev/null ;
   then
-    error && printf "Port $webhook_port is used" && nl
+    error && printf "Port $WEBHOOK_PORT is used" && nl
   else
-    ok && printf "Port $webhook_port is free" && nl
+    ok && printf "Port $WEBHOOK_PORT is free" && nl
   fi
+  
   #TODO ASK FOR OTHER PORT
 
   # Add webhook in crontab
@@ -197,9 +198,7 @@ EOF
 
   # Set remote repo to hooks dir
   cd ~/webhooks/hooks && git init --quiet 2>/dev/null
-  git remote add origin $webhook_config_git_repo ~/ 2>/dev/null && cd ~/ 2>/dev/null
-
-  
+  git remote add origin $WEBHOOKS_CONFIG_REPO ~/ 2>/dev/null && cd ~/ 2>/dev/null
 
   # All go ok
   ok && printf "Feature created: Set Webhooks from Git" && nl
@@ -213,16 +212,16 @@ createSSHKeysDir()
   
   {
     # if .ssh dir not exist create it 
-    mkdir -p $ssh_dir $ssh_dir/$ssh_keys_dir
+    mkdir -p $SSH_DIR $SSH_DIR/$SSH_KEYS_DIR
     # Home directory on the server should not be writable by others
     chmod go-w /home/$USER
     # SSH folder on the server needs 700 permissions: 
-    chmod 700 $ssh_dir $ssh_dir/$ssh_keys_dir
+    chmod 700 $SSH_DIR $SSH_DIR/$SSH_KEYS_DIR
     # Authorized_keys file needs 644 permissions: 
-    chmod 644 $ssh_dir/authorized_keys
+    chmod 644 $SSH_DIR/authorized_keys
     # Make sure that user owns the files/folders and not root: 
-    chown $USER $ssh_dir/authorized_keys
-    chown $USER $ssh_dir $ssh_dir
+    chown $USER $SSH_DIR/authorized_keys
+    chown $USER $SSH_DIR $SSH_DIR
     # Restart SSH service
     service ssh restart
 
@@ -238,13 +237,13 @@ createSSHKey()
   working && printf "Generating SSH KEY ..."
 
   # create ssh key 
-  yes y |ssh-keygen -f $ssh_dir/$ssh_keys_dir/id_$1 -N "" >/dev/null
+  yes y |ssh-keygen -f $SSH_DIR/$SSH_KEYS_DIR/id_$1 -N "" >/dev/null
 
   # Inform public key
   info && printf "SSH Keys created! here is your public key: " && nl
 
   # Show it
-  cat $ssh_dir/$ssh_keys_dir/id_$1.pub
+  cat $SSH_DIR/$SSH_KEYS_DIR/id_$1.pub
 }
 
 SSHAutoloadKeys()
@@ -259,7 +258,7 @@ SSHAutoloadKeys()
   touch ~/.bash_profile
 
   # Command to add
-  initCommand="eval \"\$(ssh-agent -s >/dev/null)\" && for f in $(ls $ssh_dir/$ssh_keys_dir --hide='*.pub'); do ssh-add $ssh_dir/$ssh_keys_dir/\$f; done"
+  initCommand="eval \"\$(ssh-agent -s >/dev/null)\" && for f in $(ls $SSH_DIR/$SSH_KEYS_DIR --hide='*.pub'); do ssh-add $SSH_DIR/$SSH_KEYS_DIR/\$f; done"
 
   # If autoload not exist alredy
   if ! grep -q initCommand ~/.bash_profile; then
