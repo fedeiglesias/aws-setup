@@ -82,19 +82,19 @@ updateYUM()
 {
   # Update YUM
   working && printf "Updating YUM ..."
-  sudo yum -y -q update >$YUM_OUTPUT_FILE
+  sudo yum -y -q update 
   waitYUMFinish
   ok && printf "YUM is updated" && nl
 
   # Upgrade YUM
   working && printf "Upgrading YUM ..."
-  sudo yum -y -q upgrade >$YUM_OUTPUT_FILE
+  sudo yum -y -q upgrade 
   waitYUMFinish
   ok && printf "YUM is upgraded" && nl
 
   #Remove orphan packages  
   working && printf "Clean orphan packages ..."
-  sudo yum -y -q autoremove >$YUM_OUTPUT_FILE
+  sudo yum -y -q autoremove 
   waitYUMFinish
   ok && printf "YUM is clean" && nl
 }
