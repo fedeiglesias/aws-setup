@@ -266,6 +266,9 @@ createSSHKey()
 
   # Show it
   cat $SSH_DIR/$SSH_KEYS_DIR/id_$1.pub
+
+  # Reload keys
+  loadAllKeys
 }
 
 SSHAutoloadKeys()
@@ -280,18 +283,33 @@ SSHAutoloadKeys()
   touch ~/.bash_profile
 
   # Command to add
-  initCommand="eval \"\$(ssh-agent -s >/dev/null)\" && for f in $(ls $SSH_DIR/$SSH_KEYS_DIR --hide='*.pub'); do ssh-add $SSH_DIR/$SSH_KEYS_DIR/\$f; done"
+  COMMAND_TITLE="# Autoload SSH Keys (do not remove this comment)"
+  COMMAND="{ [ -z \"\$SSH_AUTH_SOCK\" ] &&"
+  COMMAND="$COMMAND eval \"\$(ssh-agent -s)\" && "
+  COMMAND="$COMMAND for f in \$(ls $SSH_DIR/$SSH_KEYS_DIR --hide='*.pub'); do ssh-add $SSH_DIR/$SSH_KEYS_DIR/\$f; done } &>/dev/null"
 
   # If autoload not exist alredy
-  if ! grep -q initCommand ~/.bash_profile; then
+  if ! grep -q "$COMMAND_TITLE" ~/.bash_profile; then
     # Add title ;)
-    echo -e "\n# Run SSH agent and load all keys" >> ~/.bash_profile
+    echo -e "\n $COMMAND_TITLE" >> ~/.bash_profile
     # Add command
-    echo $initCommand >> ~/.bash_profile
+    echo $COMMAND >> ~/.bash_profile
+  fi
+
+  # If autoload not exist alredy
+  if grep -q "Run" ~/.bash_profile; then
+    echo "esta"
   fi
 
   # All go ok
   ok && printf "Set Autoload SSH Keys at login" && nl
+}
+
+loadAllKeys()
+{
+  for f in $(ls $SSH_DIR/$SSH_KEYS_DIR --hide='*.pub'); do 
+    ssh-add $SSH_DIR/$SSH_KEYS_DIR/$f &>/dev/null; 
+  done
 }
 
 
