@@ -1,6 +1,6 @@
 # aws-setup
 
-run `source <(curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master/setup.sh?token=AFC7YUK34I32P6OQ7OSZTM25W5KGQ)`
+run `source <(curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master/setup.sh?token=AFC7YUOUPMKBCCC2NDERJAC54ZWA2)`
 
 Github have a nice feature called webhooks. With this feature you can send a 
 message to our server when your project have changes, so you can trigger a 
@@ -103,4 +103,43 @@ sudo make install
   # All go ok
   #ok && printf "Webhook added to Crontab" && nl
 
-eval $(ssh-agent -s) && for f in $(ls ~/.ssh/keys/ --hide='*.pub'); do ssh-add ~/.ssh/keys/$f; done
+
+# Lets Encript wilcard certificate with acme.sh & Route53
+ 1 - Go to AWS admin panel > My security credentials > Users
+ 2 - Create new user
+ 3 - Go to 'Security credentials' tab and create a Access key
+ 3 - Add perm with this data: 
+
+`{
+      "Version": "2012-10-17",
+      "Statement": [
+          {
+              "Effect": "Allow",
+              "Action": [
+                  "route53:GetHostedZone",
+                  "route53:ListHostedZones",
+                  "route53:ListHostedZonesByName",
+                  "route53:GetHostedZoneCount",
+                  "route53:ChangeResourceRecordSets",
+                  "route53:ListResourceRecordSets"
+              ],
+              "Resource": "*"
+          }
+      ]
+  }`
+
+  4 - Save Access Keys 
+  `export  AWS_ACCESS_KEY_ID=AKIA6MVC6Y6XZMIGIQGV
+  export  AWS_SECRET_ACCESS_KEY=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`
+
+  5 - Issue a new wildcard domain (fedeiglesias.com)
+  `acme.sh --test --issue -d www.fedeiglesias.com -d fedeiglesias.com -d *.fedeiglesias.com --dns dns_aws`
+
+  6- Install the certificate
+  `mkdir ~/.ssl_certificates`
+  `acme.sh --install-cert 
+    -d fedeiglesias.com 
+    --cert-file ~/.ssl_certificates/fedeiglesias.com/cert.pem 
+    --key-file ~/.ssl_certificates/fedeiglesias.com/key.pem 
+    --fullchain-file ~/.ssl_certificates/fedeiglesias.com/fullchain.pem 
+    --reloadcmd "sudo service nginx restart"`
