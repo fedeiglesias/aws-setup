@@ -385,6 +385,17 @@ installNode()
   ok && printf "Node installed" && nl
 }
 
+installAcme()
+{
+  working && printf "Installing Acme ..."
+
+  git clone -q https://github.com/Neilpang/acme.sh.git
+  
+  cd acme.sh && ./acme.sh --install >/dev/null 2>&1
+  cd ~ && rm -rf acme.sh
+
+  ok && printf "Acme installed" && nl
+}
 
 printLogo
 
@@ -403,3 +414,5 @@ installNginx
 installWebhook
 
 configWebhooksFromGit
+
+installAcme
