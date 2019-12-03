@@ -358,9 +358,15 @@ installNVM()
   # LTS
   VER_LTS=$(curl -s 'https://api.github.com/repos/nvm-sh/nvm/releases/latest' | jq -r '.tag_name') 2>/dev/null
 
-  # Install nvm
-  curl --silent --output /dev/null https://raw.githubusercontent.com/nvm-sh/nvm/$VER_LTS/install.sh | bash 
-  
+  # download installer
+  curl -sS https://raw.githubusercontent.com/nvm-sh/nvm/$VER_LTS/install.sh > /tmp/install-nvm.sh 
+
+  # run installer 
+  bash /tmp/install-nvm.sh 2>&1 >/dev/null
+
+  # delete install script
+  rm -rf /tmp/install-nvm.sh
+
   # restart bash
   source ~/.bashrc
 
