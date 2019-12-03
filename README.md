@@ -133,7 +133,7 @@ sudo make install
   export  AWS_SECRET_ACCESS_KEY=xWg09h/X/OQVYatAPleoYmh7A4tItZkW40mYKxeX`
 
   5 - Issue a new wildcard domain (fedeiglesias.com)
-  `acme.sh --test --issue -d www.fedeiglesias.com -d fedeiglesias.com -d *.fedeiglesias.com --dns dns_aws`
+  `acme.sh --staging --force --issue -d fedeiglesias.com -d *.fedeiglesias.com --dns dns_aws`
 
   6- Install the certificate
   `mkdir ~/.ssl_certificates`
@@ -143,3 +143,7 @@ sudo make install
     --key-file ~/.ssl_certificates/fedeiglesias.com/key.pem 
     --fullchain-file ~/.ssl_certificates/fedeiglesias.com/fullchain.pem 
     --reloadcmd "sudo service nginx restart"`
+
+
+
+acme.sh --install-cert -d fedeiglesias.com --cert-file ~/.ssl_certificates/fedeiglesias.com/cert.pem --key-file ~/.ssl_certificates/fedeiglesias.com/key.pem --fullchain-file ~/.ssl_certificates/fedeiglesias.com/fullchain.pem --reloadcmd "sudo service nginx restart"

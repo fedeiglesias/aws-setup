@@ -28,6 +28,8 @@ WEBHOOK_PORT=9000
 WEBHOOKS_CONFIG_REPO="git@github.com:fedeiglesiasc/server-webhooks.git"
 WEBHOOKS_CONFIG_KEY_NAME="webhooks_config"
 
+#SSL CERTIFICATES
+SSL_CERTIFICATES_DIR="/home/$USER/.ssl_certificates"
 
 
 # COLORS
@@ -188,6 +190,26 @@ EOF
 
   # All go ok
   ok && printf "Webhook added to UpStart" && nl
+
+
+  # Add proxypass to Nginx
+  working && printf "Adding proxypass for port $WEBHOOK_PORT..."
+  
+  sudo tee -a /etc/nginx/config.d/webhook.conf >/dev/null <<EOF
+  server {
+    listen $WEBHOOK_PORT;
+
+    location / {
+      proxy_pass http://127.0.0.1:$WEBHOOK_PORT;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header Host $http_host;
+      proxy_redirect off;
+    }
+  }
+EOF
+
+  ok && printf "Proxypass added for port $WEBHOOK_PORT" && nl
+
 }
 
 configWebhooksFromGit() 
@@ -395,7 +417,42 @@ installAcme()
   cd ~ && rm -rf acme.sh
   source ~/.bashrc
 
+  # Create directory for installed ssl certificates
+  mkdir $SSL_CERTIFICATES_DIR
+
   ok && printf "Acme installed" && nl
+}
+
+setAWSCredentials()
+{
+
+  # TODO: Check if have credentials aready set.
+
+  # Ask data to user
+  read -p 'AWS Access key ID: ' SSL_CERTIFICATE_AWS_ACCESS_KEY_ID
+  read -p 'AWS Secret Access key ID: ' SSL_CERTIFICATE_AWS_SECRET_ACCESS_KEY
+
+  cat > ~/.acme.sh/account.conf << EOF
+  export AWS_ACCESS_KEY_ID=$SSL_CERTIFICATE_AWS_ACCESS_KEY_ID
+  export AWS_SECRET_ACCESS_KEY=$SSL_CERTIFICATE_AWS_SECRET_ACCESS_KEY
+EOF
+}
+
+createWildcardCertificate()
+{
+  # Ask data to user
+  read -p 'AWS Access key ID: ' SSL_CERTIFICATE_AWS_ACCESS_KEY_ID
+  read -p 'AWS Secret Access key ID: ' SSL_CERTIFICATE_AWS_SECRET_ACCESS_KEY
+
+  # Remove old keys
+  # sed '/export AWS_ACCESS_KEY_ID=/d' -i ~/.acme.sh/account.conf
+  # sed '/export AWS_SECRET_ACCESS_KEY=/d' -i ~/.acme.sh/account.conf
+
+
+  cat > ~/.acme.sh/account.conf << EOF
+  export AWS_ACCESS_KEY_ID=$SSL_CERTIFICATE_AWS_ACCESS_KEY_ID
+  export AWS_SECRET_ACCESS_KEY=$SSL_CERTIFICATE_AWS_SECRET_ACCESS_KEY
+EOF
 }
 
 printLogo
