@@ -184,7 +184,7 @@ EOF
     # Start service
     sudo initctl start webhook
 
-  } 2>/dev/null
+  } >/dev/null 2>&1
 
   # All go ok
   ok && printf "Webhook added to UpStart" && nl
@@ -393,6 +393,7 @@ installAcme()
   
   cd acme.sh && ./acme.sh --install >/dev/null 2>&1
   cd ~ && rm -rf acme.sh
+  source ~/.bashrc
 
   ok && printf "Acme installed" && nl
 }
