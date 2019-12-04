@@ -28,6 +28,10 @@ WEBHOOK_PORT=9000
 WEBHOOKS_CONFIG_REPO="git@github.com:fedeiglesiasc/server-webhooks.git"
 WEBHOOKS_CONFIG_KEY_NAME="webhooks_config"
 
+# NGINX Config repo
+NGINX_CONFIG_REPO="git@github.com:fedeiglesiasc/server-nginx.git"
+NGINX_CONFIG_KEY_NAME="nginx_config"
+
 #SSL CERTIFICATES
 SSL_CERTIFICATES_DIR="/home/$USER/.ssl_certificates"
 
@@ -66,10 +70,20 @@ info()
   printf "\r [ ${cyan}INFO${end} ] "
 }
 
+todo()
+{
+  printf "\r [ ${magenta}TODO${end} ] "
+}
+
 nl()
 {
   printf "                                \n"
-} 
+}
+
+pause() 
+{
+  read -p '' PAUSE
+}
 
 
 # When Yum output goes to a file
@@ -261,6 +275,55 @@ EOF
   # Create SSH Keys for this feature
   createSSHKey $WEBHOOKS_CONFIG_KEY_NAME
 }
+
+configNginxWebhook() 
+{
+  
+  # Add configure startup webhook project
+  working && printf "Installing Feature: Set Nginx config from Git ..."
+  
+  # Create hook directory
+  mkdir -p ~/webhooks/hooks/nginx 2>/dev/null
+  # Create repo directory
+  mkdir -p ~/nginx 2>/dev/null
+
+  # Create main hook file
+  cat > ~/webhooks/main/hooks/hook.json << EOF
+    [
+      {
+        "id": "nginx",
+        "execute-command": "/home/$USER/webhooks/hooks/nginx/script.sh",
+        "command-working-directory": "/home/$USER/nginx/",
+        "response-message": "Executing deploy script..."
+      }
+    ]
+EOF
+
+  # Create main shell script file
+  cat > ~/webhooks/main/script.sh << EOF
+    #!/bin/bash
+
+    git fetch --all
+    git checkout --force "origin/master"
+
+    # Restart service webhooks to get changes
+EOF
+
+  # Set remote repo to nginx
+  cd ~/nginx && git init --quiet 2>/dev/null
+  git remote add origin $NGINX_CONFIG_REPO 2>/dev/null && cd ~/ 2>/dev/null
+
+  # All go ok
+  ok && printf "Feature created: Set Nginx config from Git" && nl
+
+  # Create SSH Keys for this feature
+  createSSHKey $NGINX_CONFIG_KEY_NAME
+
+  # Inform public key
+  todo && printf "Paste this 'Deploy Key' in server-webhooks repo config, then press enter" && pause
+  
+}
+
 
 createSSHKeysDir()
 {
