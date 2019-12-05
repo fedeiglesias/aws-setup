@@ -13,7 +13,12 @@ printLogo()
   echo ""
 }
 
-# Variables Initialization
+#server
+SERVER_NAME='bambu'
+
+# git
+GIT_USERNAME='$SERVER_NAME'
+GIT_EMAIL='server@domain.com'
 
 # Yum output file
 YUM_OUTPUT_FILE='/tmp/yum-out'
@@ -415,7 +420,14 @@ loadAllKeys()
 installGit()
 {
   working && printf "Installing GIT ..."
+  
+  # Install GIT
   sudo yum -y install git >$YUM_OUTPUT_FILE && waitYUM
+  
+  # Basic config
+  git config --global user.name $GIT_USERNAME
+  git config --global user.email $GIT_EMAIL
+  
   ok && printf "GIT installed" && nl
 }
 
