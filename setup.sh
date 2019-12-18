@@ -201,12 +201,12 @@ EOF
   sleep 2
 
   # Reload configuration
-  sudo initctl reload-configuration --quiet && sleep 2
+  sudo initctl reload-configuration
 
   # Start service
-  sudo initctl start --quiet webhook
+  sudo initctl start webhook
 
-  # All go ok
+  # All go okA
   ok && printf "Webhook added to UpStart" && nl
 
 
