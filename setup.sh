@@ -198,10 +198,10 @@ installWebhook()
 EOF
 
   # Reload configuration
-  sudo initctl reload-configuration
+  sudo initctl reload-configuration --quiet
 
   # Start service
-  sudo initctl start webhook
+  sudo initctl start --quiet webhook
 
   # All go ok
   ok && printf "Webhook added to UpStart" && nl
