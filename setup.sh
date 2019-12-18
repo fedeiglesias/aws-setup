@@ -13,7 +13,7 @@ printLogo()
   echo ""
 }
 
-#server
+#serverx
 SERVER_NAME='bambu'
 
 # git
@@ -438,6 +438,8 @@ installNginx()
   sudo yum -y install nginx >$YUM_OUTPUT_FILE && waitYUM
   # Add Nginx to startup
   sudo chkconfig nginx on 2>&1 >/dev/null
+  # Start Server
+  sudo service nginx start 2>&1 >/dev/null
   # All go ok
   ok && printf "Nginx installed" && nl
 }
