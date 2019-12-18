@@ -213,8 +213,7 @@ EOF
 
   # Add proxypass to Nginx
   working && printf "Adding proxypass for port $WEBHOOK_PORT..."
-  
-  sudo tee -a /etc/nginx/config.d/webhook.conf >/dev/null <<EOF
+  sudo tee -a /etc/nginx/conf.d/webhook.conf >/dev/null <<EOF
   server {
     listen $WEBHOOK_PORT;
 
