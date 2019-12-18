@@ -197,8 +197,11 @@ installWebhook()
       exec /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1'
 EOF
 
+  # Wait for conf file.
+  sleep 2
+
   # Reload configuration
-  sudo initctl reload-configuration --quiet
+  sudo initctl reload-configuration --quiet && sleep 2
 
   # Start service
   sudo initctl start --quiet webhook
