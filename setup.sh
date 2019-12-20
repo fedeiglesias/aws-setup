@@ -258,6 +258,7 @@ configWebhooksFromGit()
   mkdir -p ~/webhooks 2>/dev/null
   mkdir -p ~/webhooks/main 2>/dev/null
   mkdir -p ~/webhooks/hooks 2>/dev/null
+  mkdir -p ~/webhooks/tmp 2>/dev/null
 
   # Create main hook file
   cat > ~/webhooks/main/hook.json << EOF
@@ -296,54 +297,6 @@ EOF
 
   # Create SSH Keys for this feature
   createSSHKey $WEBHOOKS_CONFIG_KEY_NAME
-}
-
-configNginxWebhook() 
-{
-  
-  # Add configure startup webhook project
-  working && printf "Installing Feature: Set Nginx config from Git ..."
-  
-  # Create hook directory
-  mkdir -p ~/webhooks/hooks/nginx 2>/dev/null
-  # Create repo directory
-  mkdir -p ~/nginx 2>/dev/null
-
-  # Create main hook file
-  cat > ~/webhooks/main/hooks/hook.json << EOF
-    [
-      {
-        "id": "nginx",
-        "execute-command": "/home/$USER/webhooks/hooks/nginx/script.sh",
-        "command-working-directory": "/home/$USER/nginx/",
-        "response-message": "Executing deploy script..."
-      }
-    ]
-EOF
-
-  # Create main shell script file
-  cat > ~/webhooks/main/script.sh << EOF
-    #!/bin/bash
-
-    git fetch --all
-    git checkout --force "origin/master"
-
-    # Restart service webhooks to get changes
-EOF
-
-  # Set remote repo to nginx
-  cd ~/nginx && git init --quiet 2>/dev/null
-  git remote add origin $NGINX_CONFIG_REPO 2>/dev/null && cd ~/ 2>/dev/null
-
-  # All go ok
-  ok && printf "Feature created: Set Nginx config from Git" && nl
-
-  # Create SSH Keys for this feature
-  createSSHKey $NGINX_CONFIG_KEY_NAME
-
-  # Inform public key
-  todo && printf "Paste this 'Deploy Key' in server-webhooks repo config, then press enter" && pause
-  
 }
 
 
@@ -552,6 +505,52 @@ createWildcardCertificate()
 EOF
 }
 
+nginxWebhook()
+{
+  working && printf "Installing Nginx Webhook..."
+
+  # Create directories
+  mkdir -p ~/webhooks/hooks/nginx 2>/dev/null
+  mkdir -p ~/webhooks/tmp/nginx 2>/dev/null
+
+  # Set remote repo
+  cd ~/webhooks/tmp/nginx
+  git init --quiet 2>/dev/null
+  git remote add origin $NGINX_CONFIG_REPO 2>/dev/null
+  cd ~/ 2>/dev/null
+
+  # Create main hook file
+  cat > ~/webhooks/hooks/nginx/hook.json << EOF
+    [
+      {
+        "id": "nginx",
+        "execute-command": "/home/$USER/webhooks/hooks/nginx/script.sh",
+        "command-working-directory": "/home/$USER/webhooks/tmp/nginx",
+        "response-message": "Executing deploy script..."
+      }
+    ]
+EOF
+
+  # Create main shell script file
+  cat > ~/webhooks/hooks/nginx/script.sh << EOF
+    #!/bin/bash
+
+    git fetch --all
+    git checkout --force "origin/master"
+
+    # Restart service webhooks to get changes
+EOF
+
+  # set permission to execute file
+  chmod +x ~/webhooks/hooks/nginx/script.sh
+
+  # Create SSH Keys for this feature
+  createSSHKey $NGINX_CONFIG_KEY_NAME
+
+  ok && printf "Nginx Webhook installed." && nl
+}
+
+
 printLogo
 
 updateYUM
@@ -567,5 +566,7 @@ SSHAutoloadKeys
 installNginx
 
 installWebhook
+
+nginxWebhook
 
 installAcme
