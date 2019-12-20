@@ -374,15 +374,24 @@ createSSHKey()
 {
   # Create SSH KEY
   working && printf "Generating SSH KEY ..."
+  
+  if [ ! -z $2 ]; then 
+    SHOW_IT = $2
+  else 
+    SHOW_IT = false
+  fi
 
   # create ssh key 
   yes y | ssh-keygen -f $SSH_DIR/$SSH_KEYS_DIR/id_$1 -N "" >/dev/null
 
-  # Inform public key
-  info && printf "SSH Keys created! here is your public key: " && nl
-
   # Show it
-  cat $SSH_DIR/$SSH_KEYS_DIR/id_$1.pub
+  if [ $SHOW_IT = true ]; then
+    # Inform public key
+    info && printf "SSH Keys created! here is your public key: " && nl
+    cat $SSH_DIR/$SSH_KEYS_DIR/id_$1.pub
+  else
+    ok && printf "SSH Keys created" && nl
+  fi
 
   # Reload keys
   loadAllKeys
