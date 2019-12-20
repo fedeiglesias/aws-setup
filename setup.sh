@@ -209,9 +209,12 @@ EOF
   sleep 2
 
   # Reload configuration
-  sudo initctl reload-configuration --quiet 
+  sudo initctl reload-configuration --quiet
 
+  sleep 5
 
+  # Start service
+  sudo initctl start --quiet webhook
 
   # All go ok
   ok && printf "Webhook added to UpStart" && nl
@@ -554,10 +557,6 @@ installNginx
 
 installWebhook
 
-configWebhooksFromGit
-
-installAcme
 
 
-  # Start service
-  sudo initctl start --quiet webhook
+
