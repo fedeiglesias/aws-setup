@@ -15,6 +15,7 @@ printLogo()
 
 #serverx
 SERVER_NAME='bambu'
+MAIN_DOMAIN='fedeiglesias.com'
 
 # git
 GIT_USERNAME='$SERVER_NAME'
@@ -186,7 +187,16 @@ installWebhook()
 
   #TODO ASK FOR OTHER PORT
 
-  # Add webhook in crontab
+ # Add Webhook to Upstart
+ addWebhookToUpstart
+
+ # Create conf for Nginx
+ createNginxConfMainDomain
+}
+
+addWebhookToUpstart()
+{
+ # Add webhook in crontab
   working && printf "Adding Webhook to UpStart ..."
   # Add service to UpStart
   sudo tee -a /etc/init/webhook.conf >/dev/null <<EOF
@@ -201,32 +211,33 @@ EOF
   sleep 2
 
   # Reload configuration
-  sudo initctl reload-configuration
+  sudo initctl reload-configuration --quiet 
 
   # Start service
-  sudo initctl start webhook
+  sudo initctl start --quiet webhook
 
-  # All go okA
+  # All go ok
   ok && printf "Webhook added to UpStart" && nl
+}
 
+createNginxConfMainDomain()
+{
 
   # Add proxypass to Nginx
-  working && printf "Adding proxypass for port $WEBHOOK_PORT..."
-  sudo tee -a /etc/nginx/conf.d/webhook.conf >/dev/null <<EOF
-  server {
-    listen $WEBHOOK_PORT;
+  working && printf "Create Nginx conf for '$MAIN_DOMAIN'..."
+  sudo tee -a /etc/nginx/conf.d/$MAIN_DOMAIN.conf >/dev/null <<EOF
+    server {
+      listen 80;
+      listen [::]:80;
+      server_name $MAIN_DOMAIN;
 
-    location / {
-      proxy_pass http://127.0.0.1:$WEBHOOK_PORT;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      proxy_set_header Host $http_host;
-      proxy_redirect off;
+      location /hooks/ {
+          proxy_pass http://127.0.0.1:$WEBHOOK_PORT;
+      }
     }
-  }
 EOF
 
-  ok && printf "Proxypass added for port $WEBHOOK_PORT" && nl
-
+  ok && printf "Nginx conf for '$MAIN_DOMAIN' created" && nl
 }
 
 configWebhooksFromGit() 
