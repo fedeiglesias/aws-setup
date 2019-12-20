@@ -185,8 +185,6 @@ installWebhook()
     ok && printf "Port $WEBHOOK_PORT is free" && nl
   fi
 
-  #TODO ASK FOR OTHER PORT
-
  # Add Webhook to Upstart
  addWebhookToUpstart
 
@@ -213,8 +211,7 @@ EOF
   # Reload configuration
   sudo initctl reload-configuration --quiet 
 
-  # Start service
-  sudo initctl start --quiet webhook
+
 
   # All go ok
   ok && printf "Webhook added to UpStart" && nl
@@ -560,3 +557,7 @@ installWebhook
 configWebhooksFromGit
 
 installAcme
+
+
+  # Start service
+  sudo initctl start --quiet webhook
