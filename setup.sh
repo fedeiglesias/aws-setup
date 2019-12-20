@@ -202,7 +202,7 @@ addWebhookToUpstart()
       author "Federico Iglesias Colombo"
       start on started sshd
       stop on runlevel [!2345]
-      exec /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1'
+      exec /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1' 2>&1 >> /var/log/webhook.log 
 EOF
 
   # Wait for conf file.
