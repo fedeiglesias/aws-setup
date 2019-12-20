@@ -185,6 +185,9 @@ installWebhook()
     ok && printf "Port $WEBHOOK_PORT is free" && nl
   fi
 
+ # Create hook structure
+ configWebhooksFromGit
+
  # Add Webhook to Upstart
  addWebhookToUpstart
 
@@ -557,7 +560,5 @@ SSHAutoloadKeys
 installNginx
 
 installWebhook
-
-configWebhooksFromGit
 
 installAcme
