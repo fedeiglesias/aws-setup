@@ -211,6 +211,7 @@ EOF
   # Reload configuration
   sudo initctl reload-configuration --quiet
 
+  # prueba
   sleep 5
 
   # Start service
@@ -557,6 +558,6 @@ installNginx
 
 installWebhook
 
+configWebhooksFromGit
 
-
-
+installAcme
