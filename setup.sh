@@ -241,6 +241,10 @@ createNginxConfMainDomain()
     }
 EOF
 
+
+  # Relad Nginx config
+  sudo nginx -s reload
+
   ok && printf "Nginx conf for '$MAIN_DOMAIN' created" && nl
 }
 
