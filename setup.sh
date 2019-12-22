@@ -558,8 +558,10 @@ EOF
   cat > ~/webhooks/hooks/nginx/script.sh << EOF
     #!/bin/bash
     
-    git branch --quiet --set-upstream-to=origin/master master
-    git fetch --all && git checkout --force "origin/master"
+    # git branch --quiet --set-upstream-to=origin/master master
+    git fetch --all
+    git checkout --force "origin/master"
+    git reset --hard origin/master
 
     # Get commit counter
     COMMITS=\$(git rev-list --all --count)
@@ -623,7 +625,7 @@ EOF
 
         # Push changes to repo
         git add . && git commit -m "NGINX new config result"
-        git push
+        git push origin master
       fi
     fi
 EOF
