@@ -18,8 +18,8 @@ SERVER_NAME='bambu'
 MAIN_DOMAIN='fedeiglesias.com'
 
 # git
-GIT_USERNAME='$SERVER_NAME'
-GIT_EMAIL='server@domain.com'
+GIT_USERNAME=$SERVER_NAME
+GIT_EMAIL="server@${MAIN_DOMAIN}"
 
 # Yum output file
 YUM_OUTPUT_FILE='/tmp/yum-out'
@@ -538,7 +538,71 @@ EOF
     git fetch --all
     git checkout --force "origin/master"
 
-    # Restart service webhooks to get changes
+    # Get commit counter
+    COMMITS=\$(git rev-list --all --count)
+
+    if (( COMMITS > 0 )); then
+      
+      # Get last commit Author
+      AUTHOR=\$(git log -1 --pretty=format:'%an' | xargs)
+      
+      # If the author is not the server
+      if [ "\$AUTHOR" != "$GIT_USERNAME" ]; then
+        
+        # create backup dir
+        sudo mkdir -p /etc/nginx/conf.d/.bkp
+
+        # Move all current conf files to .bkp
+        sudo rsync -aq --remove-source-files /etc/nginx/conf.d /etc/nginx/conf.d/.bkp/ --exclude .bkp
+        sudo rsync -aq --delete `mktemp -d`/ /etc/nginx/conf.d/ --exclude .bkp
+
+        # Move new conf files to conf.d
+        sudo rsync -av -q --progress /home/\$USER/webhooks/tmp/nginx/ /etc/nginx/conf.d/ --exclude .git --exclude .gitignore --exclude log
+
+        # Write log
+        echo "-------------------------------------------------------------" >> log
+        echo "DATE: $(date +%D)" >> log
+        echo "TIME: $(date +%T)" >> log
+
+        # Check new config & save result
+        OK=false && sudo nginx -t && OK=true
+
+        if [ $OK == true ]; then
+          
+          # Remove .bkp
+          sudo rm -rf /etc/nginx/conf.d/.bkp/
+          
+          # Reload nginx
+          sudo nginx -s reload
+          
+          # Write log
+          echo "RESULT: OK" >> log
+
+        else
+
+          # Remove all corrupt conf files
+          sudo rsync -aq --delete `mktemp -d`/ /etc/nginx/conf.d/ --exclude .bkp
+          
+          # Move old files again
+          sudo rsync -aq --remove-source-files /etc/nginx/conf.d/.bkp/ /etc/nginx/conf.d --exclude .bkp
+          
+          # Remove .bkp directory
+          sudo rm -rf /etc/nginx/conf.d/.bkp/
+
+          # Reload nginx
+          sudo nginx -s reload
+
+          # Write log
+          echo "RESULT: ERROR" >> log
+          echo "DUMP:" >> log
+          sudo nginx -t &>> log
+        fi
+
+        # Push changes to repo
+        git add . && git commit -m "NGINX new config result"
+        git push
+      fi
+    fi
 EOF
 
   # set permission to execute file
@@ -546,6 +610,9 @@ EOF
 
   # Create SSH Keys for this feature
   createSSHKey $NGINX_CONFIG_KEY_NAME
+
+  # Restart Webhook
+  sudo initctl restart webhook
 
   ok && printf "Nginx Webhook installed." && nl
 }

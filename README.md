@@ -1,6 +1,6 @@
 # aws-setup
 
-run `source <(curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master/setup.sh?token=AFC7YUKBXTMNDXS6GSQ2URK57TJTY)`
+run `source <(curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master/setup.sh?token=AFC7YUOWRASQPRV3H6ALKWC57T7RM)`
 
 Github have a nice feature called webhooks. With this feature you can send a 
 message to our server when your project have changes, so you can trigger a 
@@ -150,6 +150,17 @@ acme.sh --install-cert -d fedeiglesias.com --cert-file ~/.ssl_certificates/fedei
 
 
 
+## NGINX
+
+
+
+### The service (initctl)
+ * Webhook run as a service in initctl
+ * The Job generates logs in /var/log/webhook.log
+ * Usefull commands to manage (upstart) webhook service: 
+   - status: sudo initctl status webhook
+   - start: sudo initctl start webhook
+   - stop: sudo initctl stop webhook
 
 
 ## Webhooks
