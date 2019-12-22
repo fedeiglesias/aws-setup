@@ -323,6 +323,9 @@ createSSHKeysDir()
 
   } 2>/dev/null
 
+  # Add github to know hosts
+  ssh-keyscan github.com >> ~/.ssh/known_hosts
+
   # All go ok
   ok && printf "Set SSH dir structure and perms" && nl
 }
@@ -515,9 +518,10 @@ nginxWebhook()
 
   # Set remote repo
   cd ~/webhooks/tmp/nginx
-  git init --quiet 2>/dev/null
-  git remote add origin $NGINX_CONFIG_REPO 2>/dev/null
-  cd ~/ 2>/dev/null
+  git init --quiet
+  git remote add origin $NGINX_CONFIG_REPO
+  git branch --quiet --set-upstream-to=origin/master master
+  cd ~/
 
   # Create main hook file
   cat > ~/webhooks/hooks/nginx/hook.json << EOF
