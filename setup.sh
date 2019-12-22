@@ -296,7 +296,7 @@ EOF
   ok && printf "Feature created: Set Webhooks from Git" && nl
 
   # Create SSH Keys for this feature
-  createSSHKey $WEBHOOKS_CONFIG_KEY_NAME
+  createSSHKey $WEBHOOKS_CONFIG_KEY_NAME 1
 }
 
 
@@ -330,20 +330,40 @@ createSSHKeysDir()
   ok && printf "Set SSH dir structure and perms" && nl
 }
 
+prueba2()
+{
+  MODE=0
+
+  echo $MODE
+}
+
 createSSHKey()
 {
+  # MODE:
+  # 0: dont show anything
+  # 1: show process status
+  # 2: show process status & created key
+  MODE=0
+  if [ -n "$2" ]; then 
+    MODE=$2
+  fi
+
   # Create SSH KEY
-  working && printf "Generating SSH KEY ..."
-  
+  if [ $MODE = 1 ] || [ $MODE = 2 ]; then
+    working && printf "Generating SSH KEY ..."
+  fi
+
   # create ssh key 
   yes y | ssh-keygen -f $SSH_DIR/$SSH_KEYS_DIR/id_$1 -N "" >/dev/null
 
   # Show it
-  if [ ! -z $2 ] && [ $2 = true ]; then
+  if [ $MODE = 2 ]; then
     # Inform public key
     info && printf "SSH Keys created! here is your public key: " && nl
     cat $SSH_DIR/$SSH_KEYS_DIR/id_$1.pub
-  else
+  fi
+
+  if [ $MODE = 1 ] || [ $MODE = 2 ]; then
     ok && printf "SSH Keys created" && nl
   fi
 
@@ -520,7 +540,6 @@ nginxWebhook()
   cd ~/webhooks/tmp/nginx
   git init --quiet
   git remote add origin $NGINX_CONFIG_REPO
-  git branch --quiet --set-upstream-to=origin/master master
   cd ~/
 
   # Create main hook file
@@ -538,9 +557,9 @@ EOF
   # Create main shell script file
   cat > ~/webhooks/hooks/nginx/script.sh << EOF
     #!/bin/bash
-
-    git fetch --all
-    git checkout --force "origin/master"
+    
+    git branch --quiet --set-upstream-to=origin/master master
+    git fetch --all && git checkout --force "origin/master"
 
     # Get commit counter
     COMMITS=\$(git rev-list --all --count)
@@ -613,7 +632,7 @@ EOF
   chmod +x ~/webhooks/hooks/nginx/script.sh
 
   # Create SSH Keys for this feature
-  createSSHKey $NGINX_CONFIG_KEY_NAME
+  createSSHKey $NGINX_CONFIG_KEY_NAME 0
 
   # Restart Webhook
   sudo initctl restart webhook
