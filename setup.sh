@@ -564,7 +564,7 @@ EOF
 
 REPO="$NGINX_CONFIG_REPO"
 HOME="/home/$USER"
-DIR="\$HOME/webhooks/tmp/nginx/"
+DIR="\$HOME/webhooks/tmp/nginx"
 REPO_DIR="\$DIR/repo"
 LOG="\$DIR/exec.log"
 
@@ -587,12 +587,13 @@ if [ \$FIRST_TIME == true ]; then
   echo "Create tmp directory" >> \$LOG
 
   mkdir -p \$REPO_DIR
-  git clone $REPO . 2> \$HOME/out.log
+  git clone \$REPO \$REPO_DIR 2> \$HOME/out.log
 
   # Copy initial conf & push
   sudo rsync -aq /etc/nginx/conf.d/ \$REPO_DIR/ --exclude .bkp
-  git add . && git commit -m "Initial config"
-  git push
+  git add .  2> \$HOME/out.log
+  git commit -m "Initial config"  2> \$HOME/out.log
+  git push 2> \$HOME/out.log
 
 fi
 
