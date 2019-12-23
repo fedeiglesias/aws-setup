@@ -205,7 +205,7 @@ addWebhookToUpstart()
       author "Federico Iglesias Colombo"
       start on started sshd
       stop on runlevel [!2345]
-      exec /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1' 2>&1 >> /var/log/webhook.log 
+      exec sudo /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1' 2>&1 >> /var/log/webhook.log 
 EOF
 
   # Wait for conf file.
@@ -534,13 +534,6 @@ nginxWebhook()
 
   # Create directories
   mkdir -p ~/webhooks/hooks/nginx 2>/dev/null
-  mkdir -p ~/webhooks/tmp/nginx 2>/dev/null
-
-  # Set remote repo
-  cd ~/webhooks/tmp/nginx
-  git init --quiet
-  git remote add origin $NGINX_CONFIG_REPO
-  cd ~/
 
   # Create main hook file
   cat > ~/webhooks/hooks/nginx/hook.json << EOF
@@ -567,76 +560,93 @@ EOF
   # Create main shell script file
   cat > ~/webhooks/hooks/nginx/script.sh << EOF
 #!/bin/bash
-    
-# git branch --quiet --set-upstream-to=origin/master master
+
+REPO="$NGINX_CONFIG_REPO"
+HOME="/home/\$USER"
+REPO_DIR="\$HOME/webhooks/tmp/nginx"
+
+# If is the first time create & clone the repo
+FIRST_TIME=true && [ -d "\$REPO_DIR" ] && FIRST_TIME=false
+
+if [ \$FIRST_TIME == true ]; then
+  
+  # Create repo
+  mkdir -p \$REPO_DIR
+  cd \$REPO_DIR
+  git clone $REPO .
+  cd \$HOME
+
+  # Copy initial conf & push
+  sudo rsync -aq /etc/nginx/conf.d/ \$REPO_DIR/ --exclude .bkp
+  git add . && git commit -m "Initial config"
+  git push
+
+fi
+
+# Get latest 
 git fetch --all
-git checkout --force "origin/master"
-git reset --hard origin/master
 
 # Get commit counter
 COMMITS=\$(git rev-list --all --count)
 
-if (( COMMITS > 0 )); then
+# Get last commit Author
+AUTHOR=\$(git log -1 --pretty=format:'%an' | xargs)
+
+# If the author is not the server
+if [ "\$AUTHOR" != "$GIT_USERNAME" ]; then
   
-  # Get last commit Author
-  AUTHOR=\$(git log -1 --pretty=format:'%an' | xargs)
-  
-  # If the author is not the server
-  if [ "\$AUTHOR" != "$GIT_USERNAME" ]; then
+  # create backup dir
+  sudo mkdir -p /etc/nginx/conf.d/.bkp
+
+  # Move all current conf files to .bkp
+  sudo rsync -aq --remove-source-files /etc/nginx/conf.d/ /etc/nginx/conf.d/.bkp/ --exclude .bkp
+  sudo rsync -aq --delete `mktemp -d`/ /etc/nginx/conf.d/ --exclude .bkp
+
+  # Move new conf files to conf.d
+  sudo rsync -av -q --progress /home/\$USER/webhooks/tmp/nginx/ /etc/nginx/conf.d/ --exclude .git --exclude .gitignore --exclude log
+
+  # Write log
+  echo "-------------------------------------------------------------" >> log
+  echo "DATE: $(date +%D)" >> log
+  echo "TIME: $(date +%T)" >> log
+
+  # Check new config & save result
+  OK=false && sudo nginx -t && OK=true
+
+  if [ $OK == true ]; then
     
-    # create backup dir
-    sudo mkdir -p /etc/nginx/conf.d/.bkp
+    # Remove .bkp
+    sudo rm -rf /etc/nginx/conf.d/.bkp/
+    
+    # Reload nginx
+    sudo nginx -s reload
+    
+    # Write log
+    echo "RESULT: OK" >> log
 
-    # Move all current conf files to .bkp
-    sudo rsync -aq --remove-source-files /etc/nginx/conf.d /etc/nginx/conf.d/.bkp/ --exclude .bkp
+  else
+
+    # Remove all corrupt conf files
     sudo rsync -aq --delete `mktemp -d`/ /etc/nginx/conf.d/ --exclude .bkp
+    
+    # Move old files again
+    sudo rsync -aq --remove-source-files /etc/nginx/conf.d/.bkp/ /etc/nginx/conf.d --exclude .bkp
+    
+    # Remove .bkp directory
+    sudo rm -rf /etc/nginx/conf.d/.bkp/
 
-    # Move new conf files to conf.d
-    sudo rsync -av -q --progress /home/\$USER/webhooks/tmp/nginx/ /etc/nginx/conf.d/ --exclude .git --exclude .gitignore --exclude log
+    # Reload nginx
+    sudo nginx -s reload
 
     # Write log
-    echo "-------------------------------------------------------------" >> log
-    echo "DATE: $(date +%D)" >> log
-    echo "TIME: $(date +%T)" >> log
-
-    # Check new config & save result
-    OK=false && sudo nginx -t && OK=true
-
-    if [ $OK == true ]; then
-      
-      # Remove .bkp
-      sudo rm -rf /etc/nginx/conf.d/.bkp/
-      
-      # Reload nginx
-      sudo nginx -s reload
-      
-      # Write log
-      echo "RESULT: OK" >> log
-
-    else
-
-      # Remove all corrupt conf files
-      sudo rsync -aq --delete `mktemp -d`/ /etc/nginx/conf.d/ --exclude .bkp
-      
-      # Move old files again
-      sudo rsync -aq --remove-source-files /etc/nginx/conf.d/.bkp/ /etc/nginx/conf.d --exclude .bkp
-      
-      # Remove .bkp directory
-      sudo rm -rf /etc/nginx/conf.d/.bkp/
-
-      # Reload nginx
-      sudo nginx -s reload
-
-      # Write log
-      echo "RESULT: ERROR" >> log
-      echo "DUMP:" >> log
-      sudo nginx -t &>> log
-    fi
-
-    # Push changes to repo
-    git add . && git commit -m "NGINX new config result"
-    git push origin master
+    echo "RESULT: ERROR" >> log
+    echo "DUMP:" >> log
+    sudo nginx -t &>> log
   fi
+
+  # Push changes to repo
+  git add . && git commit -m "NGINX new config result"
+  git push origin master
 fi
 EOF
 
