@@ -205,8 +205,10 @@ addWebhookToUpstart()
       author "Federico Iglesias Colombo"
       start on started sshd
       stop on runlevel [!2345]
-      exec /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1' 2>&1 >> /var/log/webhook.log 
+      exec su -s /bin/sh -c 'exec "$0" "$@"' ec2-user -- /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1' 2>&1 >> /var/log/webhook.log 
 EOF
+ 
+  # exec /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1' 2>&1 >> /var/log/webhook.log 
 
   # Wait for conf file.
   sleep 2
@@ -592,10 +594,10 @@ if [ \$FIRST_TIME == true ]; then
   git clone \$REPO . 2> \$HOME/out.log
 
   # Copy initial conf & push
-  sudo rsync -aq /etc/nginx/conf.d/ \$REPO_DIR/ --exclude .bkp
-  git add . 2> \$HOME/out.log
-  git commit -m "Initial config" 2> \$HOME/out.log
-  git push 2> \$HOME/out.log
+  # sudo rsync -aq /etc/nginx/conf.d/ \$REPO_DIR/ --exclude .bkp
+  # git add . 2> \$HOME/out.log
+  # git commit -m "Initial config" 2> \$HOME/out.log
+  # git push 2> \$HOME/out.log
 
 fi
 
@@ -603,7 +605,7 @@ fi
 cd \$REPO_DIR
 
 # Get latest 
-git fetch --all
+# git fetch --all
 
 EOF
 
