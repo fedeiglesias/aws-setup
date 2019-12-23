@@ -571,6 +571,8 @@ HOME="/home/$USER"
 DIR="\$HOME/webhooks/tmp/nginx"
 REPO_DIR="\$DIR/repo"
 LOG="\$DIR/exec.log"
+# If is the first time create & clone the repo
+FIRST_TIME=false && [ ! -d "\$REPO_DIR" ] && FIRST_TIME=true
 
 
 ###################################################################
@@ -582,24 +584,24 @@ echo "REPO: \$REPO" >> \$LOG
 echo "HOME: \$HOME" >> \$LOG
 echo "DIR: \$DIR" >> \$LOG 
 echo "REPO_DIR: \$REPO_DIR" >> \$LOG
-
-# If is the first time create & clone the repo
-FIRST_TIME=false && [ ! -d "\$REPO_DIR" ] && FIRST_TIME=true
-
 echo "FIRST_TIME: \$FIRST_TIME" >> \$LOG
+
+# Add keys for github
+echo "Load Key for this repo" >> \$LOG
+eval "$(ssh-agent -s)" >> \$LOG
+ssh-add \$HOME/.ssh/keys/id_nginx_config >> \$LOG
 
 if [ \$FIRST_TIME == true ]; then
   echo "Create tmp directory" >> \$LOG
-
   mkdir -p \$REPO_DIR
   cd \$REPO_DIR
   git clone \$REPO . 2> \$HOME/out.log
 
   # Copy initial conf & push
-  # sudo rsync -aq /etc/nginx/conf.d/ \$REPO_DIR/ --exclude .bkp
-  # git add . 2> \$HOME/out.log
-  # git commit -m "Initial config" 2> \$HOME/out.log
-  # git push 2> \$HOME/out.log
+  sudo rsync -aq /etc/nginx/conf.d/ \$REPO_DIR/ --exclude .bkp
+  git add . 2> \$HOME/out.log
+  git commit -m "Initial config" 2> \$HOME/out.log
+  git push 2> \$HOME/out.log
 
 fi
 
