@@ -587,15 +587,19 @@ if [ \$FIRST_TIME == true ]; then
   echo "Create tmp directory" >> \$LOG
 
   mkdir -p \$REPO_DIR
-  git clone \$REPO \$REPO_DIR 2> \$HOME/out.log
+  cd \$REPO_DIR
+  git clone \$REPO . 2> \$HOME/out.log
 
   # Copy initial conf & push
   sudo rsync -aq /etc/nginx/conf.d/ \$REPO_DIR/ --exclude .bkp
-  git add .  2> \$HOME/out.log
-  git commit -m "Initial config"  2> \$HOME/out.log
+  git add . 2> \$HOME/out.log
+  git commit -m "Initial config" 2> \$HOME/out.log
   git push 2> \$HOME/out.log
 
 fi
+
+# Move to repo dir
+cd \$REPO_DIR
 
 # Get latest 
 git fetch --all
