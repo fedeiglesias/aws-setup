@@ -535,7 +535,6 @@ nginxWebhook()
   # Create directories
   mkdir -p ~/webhooks/hooks/nginx 2>/dev/null
   mkdir -p ~/webhooks/tmp/nginx 2>/dev/null
-  touch ~/webhooks/tmp/nginx/first_time
 
   # Create main hook file
   cat > ~/webhooks/hooks/nginx/hook.json << EOF
@@ -568,10 +567,6 @@ HOME="/home/$USER"
 DIR="\$HOME/webhooks/tmp/nginx/"
 REPO_DIR="\$DIR/repo"
 LOG="\$DIR/exec.log"
-
-HOME="/home/$USER"
-DIR="$HOME/webhooks/tmp/nginx"
-REPO_DIR="$DIR/repo"
 
 
 ###################################################################
