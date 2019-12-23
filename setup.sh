@@ -565,16 +565,27 @@ REPO="$NGINX_CONFIG_REPO"
 HOME="/home/\$USER"
 REPO_DIR="\$HOME/webhooks/tmp/nginx"
 
+###################################################################
+
+echo "---------------------------------------------" >> exec.log
+echo "PWD: \$(pwd)" >> exec.log
+echo "REPO: \$REPO" >> exec.log
+echo "HOME: \$HOME" >> exec.log
+echo "REPO_DIR: \$REPO_DIR" >> exec.log
+
 # If is the first time create & clone the repo
 FIRST_TIME=true && [ -d "\$REPO_DIR" ] && FIRST_TIME=false
 
+echo "FIRST_TIME: \$FIRST_TIME" >> exec.log
+
 if [ \$FIRST_TIME == true ]; then
   
+  echo "Create tmp directory" >> exec.log
+
   # Create repo
   mkdir -p \$REPO_DIR
   cd \$REPO_DIR
   git clone $REPO .
-  cd \$HOME
 
   # Copy initial conf & push
   sudo rsync -aq /etc/nginx/conf.d/ \$REPO_DIR/ --exclude .bkp
