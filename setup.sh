@@ -583,6 +583,7 @@ echo "FIRST_TIME: \$FIRST_TIME" >> exec.log
 if [ \$FIRST_TIME == true ]; then
   echo "Create tmp directory" >> exec.log
 
+  rm \$REPO_DIR/first_time
   git clone $REPO .
 
   # Copy initial conf & push
