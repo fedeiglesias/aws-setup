@@ -201,11 +201,11 @@ addWebhookToUpstart()
   working && printf "Adding Webhook to UpStart ..."
   # Add service to UpStart
   sudo tee -a /etc/init/webhook.conf >/dev/null <<EOF
-      description "A Webhook server to run with Github"
-      author "Federico Iglesias Colombo"
-      start on started sshd
-      stop on runlevel [!2345]
-      exec sudo -u $USER /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1' 2>&1 >> /var/log/webhook.log 
+description "A Webhook server to run with Github"
+author "Federico Iglesias Colombo"
+start on started sshd
+stop on runlevel [!2345]
+exec sudo -u $USER /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1' 2>&1 >> /var/log/webhook.log 
 EOF
  
   # exec /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1' 2>&1 >> /var/log/webhook.log 
@@ -227,10 +227,6 @@ EOF
   ok && printf "Webhook added to UpStart" && nl
 }
 
-addWebhookToCrontab()
-{
-
-}
 
 createNginxConfMainDomain()
 {
