@@ -585,6 +585,7 @@ echo "HOME: \$HOME" >> \$LOG
 echo "DIR: \$DIR" >> \$LOG 
 echo "REPO_DIR: \$REPO_DIR" >> \$LOG
 echo "FIRST_TIME: \$FIRST_TIME" >> \$LOG
+echo "---------------------------------------------" >> exec.log
 
 # Add keys for github
 echo "Load Key for this repo" >> \$LOG
@@ -602,14 +603,19 @@ if [ \$FIRST_TIME == true ]; then
   git add . 2> \$HOME/out.log
   git commit -m "Initial config" 2> \$HOME/out.log
   git push 2> \$HOME/out.log
-
 fi
 
 # Move to repo dir
 cd \$REPO_DIR
 
 # Get latest 
-# git fetch --all
+git fetch --all
+
+# Get last commit Author
+AUTHOR=\$(git log -1 --pretty=format:'%an' | xargs)
+
+
+
 
 EOF
 
