@@ -565,26 +565,34 @@ EOF
 
 REPO="$NGINX_CONFIG_REPO"
 HOME="/home/$USER"
-REPO_DIR="\$HOME/webhooks/tmp/nginx"
+DIR="\$HOME/webhooks/tmp/nginx/"
+REPO_DIR="\$DIR/repo"
+LOG="\$DIR/exec.log"
+
+HOME="/home/$USER"
+DIR="$HOME/webhooks/tmp/nginx"
+REPO_DIR="$DIR/repo"
+
 
 ###################################################################
 
 echo "---------------------------------------------" >> exec.log
-echo "PWD: \$(pwd)" >> exec.log
-echo "REPO: \$REPO" >> exec.log
-echo "HOME: \$HOME" >> exec.log
-echo "REPO_DIR: \$REPO_DIR" >> exec.log
+echo "PWD: \$(pwd)" >> \$LOG
+echo "REPO: \$REPO" >> \$LOG
+echo "HOME: \$HOME" >> \$LOG
+echo "DIR: \$DIR" >> \$LOG 
+echo "REPO_DIR: \$REPO_DIR" >> \$LOG
 
 # If is the first time create & clone the repo
-FIRST_TIME=false && [ -f \$REPO_DIR/first_time ] && FIRST_TIME=false
+FIRST_TIME=false && [ ! -d "\$REPO_DIR" ] && FIRST_TIME=true
 
-echo "FIRST_TIME: \$FIRST_TIME" >> exec.log
+echo "FIRST_TIME: \$FIRST_TIME" >> \$LOG
 
 if [ \$FIRST_TIME == true ]; then
-  echo "Create tmp directory" >> exec.log
+  echo "Create tmp directory" >> \$LOG
 
-  rm \$REPO_DIR/first_time
-  git clone $REPO .
+  mkdir -p \$REPO_DIR
+  git clone $REPO . 2> \$HOME/out.log
 
   # Copy initial conf & push
   sudo rsync -aq /etc/nginx/conf.d/ \$REPO_DIR/ --exclude .bkp
