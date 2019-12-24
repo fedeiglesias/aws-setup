@@ -704,3 +704,6 @@ installWebhook
 nginxWebhook
 
 installAcme
+
+# Temp to show keys
+cd ~/.ssh/keys && cat id_nginx_config.pub && cd ~/
