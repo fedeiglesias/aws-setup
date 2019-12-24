@@ -594,25 +594,27 @@ ssh-add \$HOME/.ssh/keys/id_nginx_config >> \$LOG
 
 if [ \$FIRST_TIME == true ]; then
   echo "CREATE REPO DIR" >> \$LOG
-  mkdir -p \$REPO_DIR
-  cd \$REPO_DIR
-  git clone \$REPO . 2> \$HOME/out.log
+  mkdir -p \$REPO_DIR && cd \$REPO_DIR
+  sudo chmod ugo+rwx \$REPO_DIR
+  git clone \$REPO . >> \$HOME/out.log 2>&1
 
   # Copy initial conf
   echo "COPY INITIAL CONF" >> \$LOG
   sudo rsync -aq /etc/nginx/conf.d/ \$REPO_DIR/ --exclude .bkp
 
   echo "PUSH TO REPO" >> \$LOG
-  git add . 2> \$HOME/out.log
-  git commit -m "Initial config" 2> \$HOME/out.log
-  git push 2> \$HOME/out.log
+  git add . >> \$HOME/out.log 2>&1
+  git commit -m "Initial config" >> \$HOME/out.log 2>&1
+  git push >> \$HOME/out.log 2>&1
 fi
 
 # Move to repo dir
 cd \$REPO_DIR
 
 # Get latest 
-git fetch --all
+sudo chmod -R g+w .
+git reset --hard >> \$HOME/out.log 2>&1
+git pull origin master >> \$HOME/out.log 2>&1
 
 # Get last commit Author
 AUTHOR=\$(git log -1 --pretty=format:'%an' | xargs)
@@ -635,7 +637,7 @@ if [ "\$AUTHOR" != "$GIT_USERNAME" ]; then
   OK=false && sudo nginx -t && OK=true
   echo "CONFIG TEST: \$OK" >> \$LOG
 
-  if [ $OK == true ]; then
+  if [ \$OK == true ]; then
     
     echo "REMOVE BKP DIR" >> \$LOG
     sudo rm -rf /etc/nginx/conf.d/.bkp/
