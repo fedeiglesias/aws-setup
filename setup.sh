@@ -577,7 +577,7 @@ FIRST_TIME=false && [ ! -d "\$REPO_DIR" ] && FIRST_TIME=true
 
 ###################################################################
 
-echo "---------------------------------------------" >> exec.log
+echo "---------------------------------------------" > exec.log
 echo "CURR_USER: \$USER" >> \$LOG
 echo "PWD: \$(pwd)" >> \$LOG
 echo "REPO: \$REPO" >> \$LOG
@@ -593,13 +593,16 @@ eval "$(ssh-agent -s)" >> \$LOG
 ssh-add \$HOME/.ssh/keys/id_nginx_config >> \$LOG
 
 if [ \$FIRST_TIME == true ]; then
-  echo "Create tmp directory" >> \$LOG
+  echo "CREATE REPO DIR" >> \$LOG
   mkdir -p \$REPO_DIR
   cd \$REPO_DIR
   git clone \$REPO . 2> \$HOME/out.log
 
-  # Copy initial conf & push
+  # Copy initial conf
+  echo "COPY INITIAL CONF" >> \$LOG
   sudo rsync -aq /etc/nginx/conf.d/ \$REPO_DIR/ --exclude .bkp
+
+  echo "PUSH TO REPO" >> \$LOG
   git add . 2> \$HOME/out.log
   git commit -m "Initial config" 2> \$HOME/out.log
   git push 2> \$HOME/out.log
@@ -612,10 +615,60 @@ cd \$REPO_DIR
 git fetch --all
 
 # Get last commit Author
+echo "LAST_AUTHOR: \$AUTHOR" >> \$LOG
 AUTHOR=\$(git log -1 --pretty=format:'%an' | xargs)
 
+# If the author is not the server
+if [ "\$AUTHOR" != "$GIT_USERNAME" ]; then
 
+  echo "CREATE BKP DIR" >> \$LOG
+  sudo mkdir -p /etc/nginx/conf.d/.bkp
 
+  echo "MOVE CURR CONF FILES TO BKP" >> \$LOG
+  sudo rsync -aq --remove-source-files /etc/nginx/conf.d/ /etc/nginx/conf.d/.bkp/ --exclude .bkp
+  sudo rsync -aq --delete `mktemp -d`/ /etc/nginx/conf.d/ --exclude .bkp
+
+  echo "MOVE NEW CONF FILES TO NGINX" >> \$LOG
+  sudo rsync -av -q --progress \$REPO_DIR/ /etc/nginx/conf.d/ --exclude .git --exclude .gitignore --exclude log
+
+  OK=false && sudo nginx -t && OK=true
+  echo "CONFIG TEST: \$OK" >> \$LOG
+
+  if [ $OK == true ]; then
+    
+    echo "REMOVE BKP DIR" >> \$LOG
+    sudo rm -rf /etc/nginx/conf.d/.bkp/
+    
+    echo "RELOAD NGINX" >> \$LOG
+    sudo nginx -s reload
+    
+    echo "WRITE RESULTS TO LOG" >> \$LOG
+    echo "RESULT: OK" >> log
+
+  else
+
+    echo "REMOVE CORRUPT CONF" >> \$LOG
+    sudo rsync -aq --delete `mktemp -d`/ /etc/nginx/conf.d/ --exclude .bkp
+    
+    echo "RESTORE PREV CONF" >> \$LOG
+    sudo rsync -aq --remove-source-files /etc/nginx/conf.d/.bkp/ /etc/nginx/conf.d --exclude .bkp
+    
+    echo "REMOVE BKP DIR" >> \$LOG
+    sudo rm -rf /etc/nginx/conf.d/.bkp/
+
+    echo "RELOAD NGINX" >> \$LOG
+    sudo nginx -s reload
+
+    echo "WRITE RESULTS TO LOG" >> \$LOG
+    echo "RESULT: OK" >> log
+    echo "DUMP:" >> log
+    sudo nginx -t &>> log
+  fi
+
+  echo "PUSH TO REPO" >> \$LOG
+  git add . && git commit -m "NGINX new config result"
+  git push origin master
+fi
 
 EOF
 
