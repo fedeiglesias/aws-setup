@@ -615,8 +615,9 @@ cd \$REPO_DIR
 git fetch --all
 
 # Get last commit Author
-echo "LAST_AUTHOR: \$AUTHOR" >> \$LOG
 AUTHOR=\$(git log -1 --pretty=format:'%an' | xargs)
+echo "LAST_AUTHOR: \$AUTHOR" >> \$LOG
+
 
 # If the author is not the server
 if [ "\$AUTHOR" != "$GIT_USERNAME" ]; then
@@ -668,6 +669,10 @@ if [ "\$AUTHOR" != "$GIT_USERNAME" ]; then
   echo "PUSH TO REPO" >> \$LOG
   git add . && git commit -m "NGINX new config result"
   git push origin master
+fi
+
+if [ "\$AUTHOR" == "$GIT_USERNAME" ]; then
+  echo "LAST AUTHOR IS SELF SERVER > ABORT" >> \$LOG
 fi
 
 EOF
