@@ -577,7 +577,7 @@ FIRST_TIME=false && [ ! -d "\$REPO_DIR" ] && FIRST_TIME=true
 
 ###################################################################
 
-echo "---------------------------------------------" > exec.log
+echo "---------------------------------------------" >> exec.log
 echo "CURR_USER: \$USER" >> \$LOG
 echo "PWD: \$(pwd)" >> \$LOG
 echo "REPO: \$REPO" >> \$LOG
@@ -585,7 +585,8 @@ echo "HOME: \$HOME" >> \$LOG
 echo "DIR: \$DIR" >> \$LOG 
 echo "REPO_DIR: \$REPO_DIR" >> \$LOG
 echo "FIRST_TIME: \$FIRST_TIME" >> \$LOG
-echo "---------------------------------------------" >> exec.log
+echo "" >> exec.log
+echo "" >> exec.log
 
 # Add keys for github
 echo "Load Key for this repo" >> \$LOG
@@ -636,6 +637,10 @@ if [ "\$AUTHOR" != "$GIT_USERNAME" ]; then
   OK=false && sudo nginx -t && OK=true
   echo "CONFIG TEST: \$OK" >> \$LOG
 
+  echo "-------------------------------------------------------------" >> log
+  echo "DATE: $(date +%D)" >> log
+  echo "TIME: $(date +%T)" >> log
+
   if [ "\$OK" = true ]; then
     
     echo "REMOVE BKP DIR" >> \$LOG
@@ -646,8 +651,15 @@ if [ "\$AUTHOR" != "$GIT_USERNAME" ]; then
     
     echo "WRITE RESULTS TO LOG" >> \$LOG
     echo "RESULT: OK" >> log
+    echo "DUMP:" >> log
+    sudo nginx -t &>> log
 
   else
+
+    echo "WRITE RESULTS TO LOG" >> \$LOG
+    echo "RESULT: ERROR (PREV CONFIG IS RUNING NOW, FIX IT AND PUSH AGAIN)" >> log
+    echo "DUMP:" >> log
+    sudo nginx -t &>> log
 
     echo "REMOVE CORRUPT CONF" >> \$LOG
     sudo rsync -aq --delete `mktemp -d`/ /etc/nginx/conf.d/ --exclude .bkp
@@ -661,10 +673,6 @@ if [ "\$AUTHOR" != "$GIT_USERNAME" ]; then
     echo "RELOAD NGINX" >> \$LOG
     sudo nginx -s reload
 
-    echo "WRITE RESULTS TO LOG" >> \$LOG
-    echo "RESULT: ERROR" >> log
-    echo "DUMP:" >> log
-    sudo nginx -t &>> log
   fi
 
   echo "PUSH TO REPO" >> \$LOG
