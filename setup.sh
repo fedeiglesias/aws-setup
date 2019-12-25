@@ -662,7 +662,7 @@ if [ "\$AUTHOR" != "$GIT_USERNAME" ]; then
     sudo nginx -s reload
 
     echo "WRITE RESULTS TO LOG" >> \$LOG
-    echo "RESULT: OK" >> log
+    echo "RESULT: ERROR" >> log
     echo "DUMP:" >> log
     sudo nginx -t &>> log
   fi
