@@ -589,13 +589,13 @@ echo "---------------------------------------------" >> exec.log
 
 # Add keys for github
 echo "Load Key for this repo" >> \$LOG
-eval "$(ssh-agent -s)" >> \$LOG
+eval "\$(ssh-agent -s)" >> \$LOG
 ssh-add \$HOME/.ssh/keys/id_nginx_config >> \$LOG
 
-if [ \$FIRST_TIME == true ]; then
+if [ "\$FIRST_TIME" = true ]; then
   echo "CREATE REPO DIR" >> \$LOG
-  mkdir -p \$REPO_DIR && cd \$REPO_DIR
-  sudo chmod ugo+rwx \$REPO_DIR
+  mkdir -p \$REPO_DIR
+  cd \$REPO_DIR && sudo chmod ugo+rwx .
   git clone \$REPO . >> \$HOME/out.log 2>&1
 
   # Copy initial conf
@@ -611,8 +611,7 @@ fi
 # Move to repo dir
 cd \$REPO_DIR
 
-# Get latest 
-sudo chmod -R g+w .
+# Get latest
 git reset --hard >> \$HOME/out.log 2>&1
 git pull origin master >> \$HOME/out.log 2>&1
 
@@ -637,7 +636,7 @@ if [ "\$AUTHOR" != "$GIT_USERNAME" ]; then
   OK=false && sudo nginx -t && OK=true
   echo "CONFIG TEST: \$OK" >> \$LOG
 
-  if [ \$OK == true ]; then
+  if [ "\$OK" = true ]; then
     
     echo "REMOVE BKP DIR" >> \$LOG
     sudo rm -rf /etc/nginx/conf.d/.bkp/
@@ -673,7 +672,7 @@ if [ "\$AUTHOR" != "$GIT_USERNAME" ]; then
   git push origin master
 fi
 
-if [ "\$AUTHOR" == "$GIT_USERNAME" ]; then
+if [ "\$AUTHOR" = "$GIT_USERNAME" ]; then
   echo "LAST AUTHOR IS SELF SERVER > ABORT" >> \$LOG
 fi
 
