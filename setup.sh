@@ -334,12 +334,6 @@ createSSHKeysDir()
   ok && printf "Set SSH dir structure and perms" && nl
 }
 
-prueba2()
-{
-  MODE=0
-
-  echo $MODE
-}
 
 createSSHKey()
 {
@@ -532,6 +526,38 @@ createWildcardCertificate()
 EOF
 }
 
+installJava()
+{
+  working && printf "Installing Java ..."
+
+  # Install Java
+  sudo yum -y install java-1.8.0 >$YUM_OUTPUT_FILE && waitYUM
+
+  # Select Latest Version
+  sudo alternatives --set java /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/java
+
+  ok && printf "Java 1.8.0 installed" && nl
+}
+
+installJenkins()
+{
+  working && printf "Installing Jenkins ..."
+  
+  # The repos are a bit slow, assing more timeout
+  sudo sed -i 's/timeout=5/timeout=90/g' /etc/yum.conf
+
+  # Install Jenkins repo
+  sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo --quiet
+
+  # Install Jenkins key
+  sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+
+  # Install Jenkins
+  sudo yum -y install jenkins >$YUM_OUTPUT_FILE && waitYUM
+
+  ok && printf "Java 1.8.0 installed" && nl
+}
+
 nginxWebhook()
 {
   working && printf "Installing Nginx Webhook..."
@@ -596,7 +622,7 @@ ssh-add \$HOME/.ssh/keys/id_nginx_config >> \$LOG
 if [ "\$FIRST_TIME" = true ]; then
   echo "CREATE REPO DIR" >> \$LOG
   mkdir -p \$REPO_DIR
-  cd \$REPO_DIR && sudo chmod ugo+rwx .
+  cd \$REPO_DIR && sudo chmod ugo+rw .
   git clone \$REPO . >> \$HOME/out.log 2>&1
 
   # Copy initial conf
@@ -706,6 +732,10 @@ updateYUM
 installNVM
 
 installNode
+
+installJava
+
+installJenkins
 
 createSSHKeysDir
 
