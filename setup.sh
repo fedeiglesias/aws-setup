@@ -137,7 +137,10 @@ installGolang()
 
   {
     # Get LTS version
-    GOLANG_VERSION="`wget -qO- https://golang.org/VERSION?m=text`"
+    # GOLANG_VERSION="`wget -qO- https://golang.org/VERSION?m=text`"
+    # Webhook have problems with Golang go1.13.5
+    GOLANG_VERSION="go1.12.14"
+
     # Move to tmp
     cd /tmp
     # Get installer
