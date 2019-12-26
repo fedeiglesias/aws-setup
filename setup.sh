@@ -760,10 +760,6 @@ installNVM
 
 installNode
 
-installJava
-
-installJenkins
-
 createSSHKeysDir
 
 SSHAutoloadKeys
