@@ -205,7 +205,7 @@ description "A Webhook server to run with Github"
 author "Federico Iglesias Colombo"
 start on started sshd
 stop on runlevel [!2345]
-exec sudo -u $USER /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1' 2>&1 >> /var/log/webhook.log 
+exec sudo -u $USER /home/$USER/go/bin/webhook  -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1' 2>&1 >> /var/log/webhook.log 
 EOF
  
   # exec /home/$USER/go/bin/webhook -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1' 2>&1 >> /var/log/webhook.log 
@@ -234,15 +234,34 @@ createNginxConfMainDomain()
   # Add proxypass to Nginx
   working && printf "Create Nginx conf for '$MAIN_DOMAIN'..."
   sudo tee -a /etc/nginx/conf.d/$MAIN_DOMAIN.conf >/dev/null <<EOF
-    server {
-      listen 80;
-      listen [::]:80;
-      server_name $MAIN_DOMAIN;
+server {
+  listen 80;
+  listen [::]:80;
+  server_name $MAIN_DOMAIN;
 
-      location /hooks/ {
-          proxy_pass http://127.0.0.1:$WEBHOOK_PORT;
-      }
-    }
+  location /hooks/ {
+      proxy_pass http://127.0.0.1:$WEBHOOK_PORT;
+  }
+}
+
+server {
+  listen 80;
+  listen [::]:80;
+  server_name webhook.$MAIN_DOMAIN;
+
+  location / {
+      proxy_pass http://127.0.0.1:$WEBHOOK_PORT;
+  }
+}
+
+server {
+  listen 80;
+  server_name jenkins.$MAIN_DOMAIN;
+
+  location / {
+    proxy_pass http://127.0.0.1:8080;
+  }
+}
 EOF
 
 
@@ -555,7 +574,12 @@ installJenkins()
   # Install Jenkins
   sudo yum -y install jenkins >$YUM_OUTPUT_FILE && waitYUM
 
-  ok && printf "Java 1.8.0 installed" && nl
+  # Start Jenkins
+  sudo service jenkins start
+
+  ok && printf "Jenkins installed" && nl
+  info && printf "Initial Admin Password: " && sudo -s cat /var/lib/jenkins/secrets/initialAdminPassword && nl 
+  
 }
 
 nginxWebhook()
