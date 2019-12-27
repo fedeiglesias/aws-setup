@@ -37,10 +37,6 @@ WEBHOOK_PORT=9000
 WEBHOOKS_CONFIG_REPO="git@github.com:fedeiglesiasc/server-webhooks.git"
 WEBHOOKS_CONFIG_KEY_NAME="webhooks_config"
 
-# NGINX Config repo
-NGINX_CONFIG_REPO="git@github.com:fedeiglesiasc/server-nginx.git"
-NGINX_CONFIG_KEY_NAME="nginx"
-
 #SSL CERTIFICATES
 SSL_CERTIFICATES_DIR="/home/$USER/.ssl_certificates"
 
@@ -578,11 +574,13 @@ installJenkins()
   sudo yum -y install jenkins >$YUM_OUTPUT_FILE && waitYUM
 
   # Start Jenkins
-  sudo service jenkins start
+  sudo service jenkins start 2>&1 >/dev/null
+
+  # Admin password
+  INITIALADMINPASSWORD=$(sudo -s cat /var/lib/jenkins/secrets/initialAdminPassword)
 
   ok && printf "Jenkins installed" && nl
-  info && printf "Initial Admin Password: " && sudo -s cat /var/lib/jenkins/secrets/initialAdminPassword && nl 
-  
+  info && printf "Initial Admin Password: $INITIALADMINPASSWORD" && nl
 }
 
 nginxWebhook()
@@ -605,7 +603,7 @@ nginxWebhook()
   wget -O ~/webhooks/hooks/nginx/hook.json $ROCKET_REPO/webhooks/nginx/hook.json --quiet
 
   # Replace placeholders  
-  sed -i "s/\${SECRET}/$GIT_REPO_KEYWORD/g" ~/webhooks/hooks/nginx/hook.json
+  sed -i "s/\${GIT_REPO_KEYWORD}/$GIT_REPO_KEYWORD/g" ~/webhooks/hooks/nginx/hook.json
   sed -i "s/\${USER}/$USER/g" ~/webhooks/hooks/nginx/hook.json
 
   # Get Script
@@ -621,7 +619,7 @@ nginxWebhook()
   createSSHKey $NGINX_CONFIG_KEY_NAME 0
 
   # Restart Webhook
-  sudo initctl restart webhook
+  sudo initctl restart --quiet webhook
 
   ok && printf "Nginx Webhook installed." && nl
 }
@@ -654,4 +652,4 @@ nginxWebhook
 
 
 # Temp to show keys
-cd ~/.ssh/keys && cat id_nginx_config.pub && cd ~/
+cd ~/.ssh/keys && cat id_nginx.pub && cd ~/
