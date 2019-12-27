@@ -1,6 +1,6 @@
 # aws-setup
 
-1- run `source <(curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master/setup.sh?token=AFC7YUPT4SG6QRE5B6TYOAS6AENMU)`
+1- run `source <(curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master/setup.sh)`
 
 
 Github have a nice feature called webhooks. With this feature you can send a 
@@ -130,8 +130,8 @@ sudo make install
   }`
 
   4 - Save Access Keys 
-  `export  AWS_ACCESS_KEY_ID=AKIA6MVC6Y6XZMIGIQGV
-  export  AWS_SECRET_ACCESS_KEY=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`
+  `export  AWS_ACCESS_KEY_ID=
+  export  AWS_SECRET_ACCESS_KEY=`
 
   5 - Issue a new wildcard domain (fedeiglesias.com)
   `acme.sh --staging --force --issue -d fedeiglesias.com -d *.fedeiglesias.com --dns dns_aws`
