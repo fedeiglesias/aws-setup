@@ -10,24 +10,8 @@ new changes. To start using webhooks, we need to do some things. Let get's start
 First, we need to create a PRIVATE repo that will contain our webhooks configuraration.
 Copy the SSL key and paste it here (git@github.com:username/repo-name.git): 
 
-if pgrep -x "yum" > /dev/null
-then
-    echo "Running"
-else
-    echo "Stopped"
-fi
 
 
-
-https://github.com/fedeiglesiasc/aws-setup/blob/master/setup.sh
-
-# Pasos para instalar webhooks
-  1. Instalar Golang
-  2. Instalar Webhook
-  3. Crear directorios nescesarios para webhooks
-  4. Instalar python tools & arrancador al inicio
-  5. Agregar Webook al inicio
-  6. Agregar un proxypass al nginx del puerto 9001 al 9000
 
 
 # Crear y dar permisos a la configuracion de ssh
