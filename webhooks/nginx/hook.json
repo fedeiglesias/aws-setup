@@ -1,0 +1,18 @@
+[
+  {
+    "id": "nginx",
+    "execute-command": "/home/${USER}/webhooks/hooks/nginx/script.sh",
+    "command-working-directory": "/home/${USER}/webhooks/tmp/nginx",
+    "response-message": "Executing deploy script...",
+    "trigger-rule": {
+      "match": {
+        "type": "payload-hash-sha1",
+        "secret": "${SECRET}",
+        "parameter": {
+        "source": "header",
+        "name": "X-Hub-Signature"
+        }
+      }
+    }
+  }
+]
