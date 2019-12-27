@@ -6,8 +6,10 @@ HOME="/home/$USER_"
 DIR="$HOME/webhooks/tmp/nginx"
 REPO_DIR="$DIR/repo"
 LOG="$DIR/exec.log"
+GIT_USERNAME=$(git config user.name)
+
 # If is the first time create & clone the repo
-FIRST_TIME=false && [ ! -d "$REPO_DIR" ] && FIRST_TIME=true
+FIRST_TIME=false && [ -f "$DIR/first_time" ] && FIRST_TIME=true
 
 
 ###################################################################

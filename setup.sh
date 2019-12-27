@@ -13,6 +13,9 @@ printLogo()
   echo ""
 }
 
+# Rocket
+ROCKET_REPO='https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master'
+
 #serverx
 SERVER_NAME='bambu'
 MAIN_DOMAIN='fedeiglesias.com'
@@ -36,7 +39,7 @@ WEBHOOKS_CONFIG_KEY_NAME="webhooks_config"
 
 # NGINX Config repo
 NGINX_CONFIG_REPO="git@github.com:fedeiglesiasc/server-nginx.git"
-NGINX_CONFIG_KEY_NAME="nginx_config"
+NGINX_CONFIG_KEY_NAME="nginx"
 
 #SSL CERTIFICATES
 SSL_CERTIFICATES_DIR="/home/$USER/.ssl_certificates"
@@ -584,22 +587,32 @@ installJenkins()
 
 nginxWebhook()
 {
+  # NGINX Config repo
+  NGINX_CONFIG_REPO="git@github.com:fedeiglesiasc/server-nginx.git"
+  NGINX_CONFIG_KEY_NAME="nginx"
+  GIT_REPO_KEYWORD="secret"
+
   working && printf "Installing Nginx Webhook..."
 
   # Create directories
   mkdir -p ~/webhooks/hooks/nginx 2>/dev/null
   mkdir -p ~/webhooks/tmp/nginx 2>/dev/null
   mkdir -p ~/webhooks/tmp/nginx/repo 2>/dev/null
+  sudo chmod ugo+rw ~/webhooks/tmp/nginx/repo
+  touch ~/webhooks/tmp/nginx/first_time
   
-
   # Get Hook
-  wget -O ~/webhooks/hooks/nginx/hook.json https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master/webhooks/nginx/hook.json --quiet
+  wget -O ~/webhooks/hooks/nginx/hook.json $ROCKET_REPO/webhooks/nginx/hook.json --quiet
+
+  # Replace placeholders  
+  sed -i "s/\${SECRET}/$GIT_REPO_KEYWORD/g" ~/webhooks/hooks/nginx/hook.json
+  sed -i "s/\${USER}/$USER/g" ~/webhooks/hooks/nginx/hook.json
 
   # Get Script
-  wget -O ~/webhooks/hooks/nginx/script.sh https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master/webhooks/nginx/setup.sh --quiet
+  wget -O ~/webhooks/hooks/nginx/script.sh $ROCKET_REPO/webhooks/nginx/script.sh --quiet
 
   # Replace Script Placeholders
-  sed -e "s/\${NGINX_CONFIG_REPO}/$NGINX_CONFIG_REPO/" ~/webhooks/hooks/nginx/script.sh
+  sed -i "s/\${NGINX_CONFIG_REPO}/$NGINX_CONFIG_REPO/g" ~/webhooks/hooks/nginx/script.sh
 
   # set permission to execute file
   chmod +x ~/webhooks/hooks/nginx/script.sh
@@ -634,9 +647,11 @@ installNginx
 
 installWebhook
 
+installAcme
+
 nginxWebhook
 
-installAcme
+
 
 # Temp to show keys
 cd ~/.ssh/keys && cat id_nginx_config.pub && cd ~/
