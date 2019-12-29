@@ -11,18 +11,10 @@ printLogo()
   echo "  ██║  ██║ ╚██████╔╝ ╚██████╗ ██║  ██╗ ███████╗    ██║ "
   echo "  ╚═╝  ╚═╝  ╚═════╝   ╚═════╝ ╚═╝  ╚═╝ ╚══════╝    ╚═╝ "
   echo ""
-}
+} 
 
 # Rocket
 ROCKET_REPO='https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master'
-
-#serverx
-SERVER_NAME='bambu'
-MAIN_DOMAIN='fedeiglesias.com'
-
-# git
-GIT_USERNAME=$SERVER_NAME
-GIT_EMAIL="server@${MAIN_DOMAIN}"
 
 # Yum output file
 YUM_OUTPUT_FILE='/tmp/yum-out'
@@ -42,6 +34,8 @@ SSL_CERTIFICATES_DIR="/home/$USER/.ssl_certificates"
 
 
 # COLORS
+white=$'\e[1;29m'
+dark_gray=$'\e[1;30m'
 red=$'\e[1;31m'
 green=$'\e[1;32m'
 yellow=$'\e[1;33m'
@@ -75,9 +69,23 @@ info()
   printf "\r [ ${cyan}INFO${end} ] "
 }
 
-todo()
+config()
 {
-  printf "\r [ ${magenta}TODO${end} ] "
+  printf "\r ${yellow}╒═ CONFIG ═╡${end} ${white}$1${end} ${yellow}█▓▒░${end}\n"
+}
+
+config_item()
+{
+  LAST=false
+  if [ -n "$2" ]; then 
+    LAST=$2
+  fi
+
+  if [ $LAST = false ]; then
+    printf "\r ${yellow}├${end} ${dark_gray}$1${end}${yellow}›${end} "
+  else
+    printf "\r ${yellow}└${end} ${dark_gray}$1${end}${yellow} ›${end} "
+  fi
 }
 
 nl()
@@ -89,6 +97,21 @@ pause()
 {
   read -p '' PAUSE
 }
+
+config "SERVER & DOMAIN" && nl
+config_item "Server name" && read -p "" SERVER_NAME
+config_item "Main domain" true && read -p "" MAIN_DOMAIN
+
+config "GIT" && nl
+config_item "Git repo (SSH)" && read -p "$SERVER_NAME" GIT_USERNAME
+config_item "Webhook secret word" true && read -p "$GIT_USERNAME@$MAIN_DOMAIN" GIT_EMAIL
+
+config "NGINX Webhook" && nl
+config_item "Git repo (SSH)" && read -p "" WEBHOOK_NGINX_CONFIG_REPO
+config_item "Webhook secret word" true && read -p "" WEBHOOK_NGINX_CONFIG_SECRET
+
+
+
 
 
 # When Yum output goes to a file
@@ -586,9 +609,7 @@ installJenkins()
 nginxWebhook()
 {
   # NGINX Config repo
-  NGINX_CONFIG_REPO="git@github.com:fedeiglesiasc/server-nginx.git"
   NGINX_CONFIG_KEY_NAME="nginx"
-  GIT_REPO_KEYWORD="secret"
 
   working && printf "Installing Nginx Webhook..."
 
@@ -603,14 +624,14 @@ nginxWebhook()
   wget -O ~/webhooks/hooks/nginx/hook.json $ROCKET_REPO/webhooks/nginx/hook.json --quiet
 
   # Replace placeholders  
-  sed -i "s/\${GIT_REPO_KEYWORD}/$GIT_REPO_KEYWORD/g" ~/webhooks/hooks/nginx/hook.json
+  sed -i "s/\${SECRET}/$WEBHOOK_NGINX_CONFIG_SECRET/g" ~/webhooks/hooks/nginx/hook.json
   sed -i "s/\${USER}/$USER/g" ~/webhooks/hooks/nginx/hook.json
 
   # Get Script
   wget -O ~/webhooks/hooks/nginx/script.sh $ROCKET_REPO/webhooks/nginx/script.sh --quiet
 
   # Replace Script Placeholders
-  sed -i "s/\${NGINX_CONFIG_REPO}/$NGINX_CONFIG_REPO/g" ~/webhooks/hooks/nginx/script.sh
+  sed -i "s/\${NGINX_CONFIG_REPO}/$WEBHOOK_NGINX_CONFIG_REPO/g" ~/webhooks/hooks/nginx/script.sh
 
   # set permission to execute file
   chmod +x ~/webhooks/hooks/nginx/script.sh
@@ -626,6 +647,8 @@ nginxWebhook()
 
 
 printLogo
+
+configInstallation
 
 updateYUM
 
