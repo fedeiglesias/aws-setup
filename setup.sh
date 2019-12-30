@@ -74,6 +74,9 @@ config_title()
   printf "\n ${yellow}╒═ CONFIG ═╡${end} ${white}$1${end} ${yellow}█▓▒░${end}\n"
 }
 
+
+
+
 config_item()
 {
   LAST=false
@@ -639,9 +642,9 @@ config_item "Server name" && read -p "" SERVER_NAME
 config_item "Main domain" true && read -p "" MAIN_DOMAIN
 
 config_title "GIT"
-config_item "Username" && read -p "" -e -i "$SERVER_NAME" GIT_USERNAME
+read -p "$(config_item 'Username')" -e -i "$SERVER_NAME" GIT_USERNAME
+read -p "$(config_item 'Email')" -e -i "$GIT_USERNAME@$MAIN_DOMAIN" GIT_EMAIL
 
-config_item "Email [$GIT_USERNAME@$MAIN_DOMAIN]" true && read -p "" GIT_EMAIL
 
 
 
