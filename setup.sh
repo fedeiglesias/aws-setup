@@ -71,7 +71,7 @@ info()
 
 config_title()
 {
-  printf "\r ${yellow}╒═ CONFIG ═╡${end} ${white}$1${end} ${yellow}█▓▒░${end}\n"
+  printf "\n ${yellow}╒═ CONFIG ═╡${end} ${white}$1${end} ${yellow}█▓▒░${end}\n"
 }
 
 config_item()
@@ -635,7 +635,7 @@ nginxWebhook()
 
 printLogo
 
-config_title "SERVER & DOMAIN"
+instalconfig_title "SERVER & DOMAIN"
 config_item "Server name" && read -p "" SERVER_NAME
 config_item "Main domain" true && read -p "" MAIN_DOMAIN
 
@@ -647,8 +647,6 @@ config_title "NGINX Webhook"
 config_item "Git repo (SSH)" && read -p "" WEBHOOK_NGINX_CONFIG_REPO
 config_item "Webhook secret word" true && read -p "" WEBHOOK_NGINX_CONFIG_SECRET
 
-
-configInstallation
 
 updateYUM
 
