@@ -69,7 +69,7 @@ info()
   printf "\r [ ${cyan}INFO${end} ] "
 }
 
-config()
+config_title()
 {
   printf "\r ${yellow}╒═ CONFIG ═╡${end} ${white}$1${end} ${yellow}█▓▒░${end}\n"
 }
@@ -82,7 +82,7 @@ config_item()
   fi
 
   if [ $LAST = false ]; then
-    printf "\r ${yellow}├${end} ${dark_gray}$1${end}${yellow}›${end} "
+    printf "\r ${yellow}├${end} ${dark_gray}$1${end}${yellow} ›${end} "
   else
     printf "\r ${yellow}└${end} ${dark_gray}$1${end}${yellow} ›${end} "
   fi
@@ -98,15 +98,15 @@ pause()
   read -p '' PAUSE
 }
 
-config "SERVER & DOMAIN" && nl
+config_title "SERVER & DOMAIN" && nl
 config_item "Server name" && read -p "" SERVER_NAME
 config_item "Main domain" true && read -p "" MAIN_DOMAIN
 
-config "GIT" && nl
+config_title "GIT" && nl
 config_item "Git repo (SSH)" && read -p "$SERVER_NAME" GIT_USERNAME
 config_item "Webhook secret word" true && read -p "$GIT_USERNAME@$MAIN_DOMAIN" GIT_EMAIL
 
-config "NGINX Webhook" && nl
+config_title "NGINX Webhook" && nl
 config_item "Git repo (SSH)" && read -p "" WEBHOOK_NGINX_CONFIG_REPO
 config_item "Webhook secret word" true && read -p "" WEBHOOK_NGINX_CONFIG_SECRET
 
