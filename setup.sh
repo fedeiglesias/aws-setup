@@ -2,15 +2,15 @@
 
 printLogo()
 {
-  printf ""
-  printf ""
-  printf "  ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗ ${fg_blue}██╗  ${fg_blue}██╗ ${fg_blue}███████${fg_d_gray}╗ ${fg_blue}████████╗"
-  printf "  ${fg_blue}██${fg_d_gray}╔══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔═══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔════╝ ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}╔╝ ██${fg_d_gray}╔════╝ ╚══${fg_blue}██${fg_d_gray}╔══╝"
-  printf "  ${fg_blue}██████╔╝ ██║   ██║ ██║      █████╔╝  █████╗      ██║ "
-  printf "  ${fg_blue}██╔══██╗ ██║   ██║ ██║      ██╔═██╗  ██╔══╝      ██║ "
-  printf "  ${fg_blue}██║  ██║ ╚██████╔╝ ╚██████╗ ██║  ██╗ ███████╗    ██║ "
-  printf "  ╚═╝  ╚═╝  ╚═════╝   ╚═════╝ ╚═╝  ╚═╝ ╚══════╝    ╚═╝ "
-  printf ""
+  echo -n ""
+  echo -n ""
+  echo -n "  ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗ ${fg_blue}██╗  ${fg_blue}██╗ ${fg_blue}███████${fg_d_gray}╗ ${fg_blue}████████╗"
+  echo -n "  ${fg_blue}██${fg_d_gray}╔══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔═══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔════╝ ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}╔╝ ██${fg_d_gray}╔════╝ ╚══${fg_blue}██${fg_d_gray}╔══╝"
+  echo -n "  ${fg_blue}██████${fg_d_gray}╔╝ ${fg_blue}██${fg_d_gray}║   ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}║      ${fg_blue}█████${fg_d_gray}╔╝  ${fg_blue}█████${fg_d_gray}╗      ${fg_blue}██${fg_d_gray}║ "
+  echo -n "  ${fg_blue}██${fg_d_gray}╔══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}║   ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}║      ${fg_blue}██${fg_d_gray}╔═${fg_blue}██${fg_d_gray}╗  ${fg_blue}██${fg_d_gray}╔══╝      ${fg_blue}██${fg_d_gray}║ "
+  echo -n "  ${fg_blue}██${fg_d_gray}║  ${fg_blue}██${fg_d_gray}║ ╚${fg_blue}██████${fg_d_gray}╔╝ ╚${fg_blue}██████${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}║  ${fg_blue}██${fg_d_gray}╗ ${fg_blue}███████${fg_d_gray}╗    ${fg_blue}██${fg_d_gray}║ "
+  echo -n "  ${fg_d_gray}╚═╝  ╚═╝  ╚═════╝   ╚═════╝ ╚═╝  ╚═╝ ╚══════╝    ╚═╝ "
+  echo -n ""
 } 
 
 # Rocket
@@ -197,8 +197,10 @@ installGolang()
 
     # Move to tmp
     cd /tmp
+
     # Get installer
-    wget https://dl.google.com/go/$GOLANG_VERSION.linux-amd64.tar.gz --quiet
+    curl -o $GOLANG_VERSION.linux-amd64.tar.gz https://dl.google.com/go/$GOLANG_VERSION.linux-amd64.tar.gz --silent
+    
     # decompress
     sudo tar -C /usr/local -xzf $GOLANG_VERSION.linux-amd64.tar.gz
     # install 
@@ -620,7 +622,7 @@ installJenkins()
   sudo sed -i 's/timeout=5/timeout=90/g' /etc/yum.conf
 
   # Install Jenkins repo
-  sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo --quiet
+  sudo curl -o /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo --silent
 
   # Install Jenkins key
   sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
@@ -653,14 +655,14 @@ nginxWebhook()
   touch ~/webhooks/tmp/nginx/first_time
   
   # Get Hook
-  wget -O ~/webhooks/hooks/nginx/hook.json $ROCKET_REPO/webhooks/nginx/hook.json --quiet
+  curl -o ~/webhooks/hooks/nginx/hook.json $ROCKET_REPO/webhooks/nginx/hook.json --silent
 
   # Replace placeholders  
   sed -i "s/\${SECRET}/$WEBHOOK_NGINX_CONFIG_SECRET/g" ~/webhooks/hooks/nginx/hook.json
   sed -i "s/\${USER}/$USER/g" ~/webhooks/hooks/nginx/hook.json
 
   # Get Script
-  wget -O ~/webhooks/hooks/nginx/script.sh $ROCKET_REPO/webhooks/nginx/script.sh --quiet
+  curl -o ~/webhooks/hooks/nginx/script.sh $ROCKET_REPO/webhooks/nginx/script.sh --silent
 
   # Replace Script Placeholders
   sed -i "s/\${NGINX_CONFIG_REPO}/$WEBHOOK_NGINX_CONFIG_REPO/g" ~/webhooks/hooks/nginx/script.sh
