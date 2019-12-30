@@ -81,11 +81,12 @@ config_item()
     LAST=$2
   fi
 
-  if [ $LAST = false ]; then
-    printf "\r ${yellow}├${end} ${dark_gray}$1${end}${yellow} ›${end} "
-  else
-    printf "\r ${yellow}└${end} ${dark_gray}$1${end}${yellow} ›${end} "
+  PIPECHAR="├"
+  if [ $LAST = true ]; then
+    PIPECHAR="└"
   fi
+
+  printf " ${yellow}${PIPECHAR}${end} ${dark_gray}$1${end}${yellow} ›${end} "
 }
 
 nl()
@@ -97,20 +98,6 @@ pause()
 {
   read -p '' PAUSE
 }
-
-config_title "SERVER & DOMAIN" && nl
-config_item "Server name" && read -p "" SERVER_NAME
-config_item "Main domain" true && read -p "" MAIN_DOMAIN
-
-config_title "GIT" && nl
-config_item "Git repo (SSH)" && read -p "$SERVER_NAME" GIT_USERNAME
-config_item "Webhook secret word" true && read -p "$GIT_USERNAME@$MAIN_DOMAIN" GIT_EMAIL
-
-config_title "NGINX Webhook" && nl
-config_item "Git repo (SSH)" && read -p "" WEBHOOK_NGINX_CONFIG_REPO
-config_item "Webhook secret word" true && read -p "" WEBHOOK_NGINX_CONFIG_SECRET
-
-
 
 
 
@@ -647,6 +634,19 @@ nginxWebhook()
 
 
 printLogo
+
+config_title "SERVER & DOMAIN"
+config_item "Server name" && read -p "" SERVER_NAME
+config_item "Main domain" true && read -p "" MAIN_DOMAIN
+
+config_title "GIT"
+config_item "Username" && read -p "$SERVER_NAME" GIT_USERNAME
+config_item "Email" true && read -p "$GIT_USERNAME@$MAIN_DOMAIN" GIT_EMAIL
+
+config_title "NGINX Webhook"
+config_item "Git repo (SSH)" && read -p "" WEBHOOK_NGINX_CONFIG_REPO
+config_item "Webhook secret word" true && read -p "" WEBHOOK_NGINX_CONFIG_SECRET
+
 
 configInstallation
 
