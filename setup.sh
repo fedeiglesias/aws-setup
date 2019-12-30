@@ -113,7 +113,7 @@ info()
 
 config_title()
 {
-  printf "\n ${fg_l_yellow}╒══${fg_black}${bg_l_yellow} SETUP ${bg_default}${fg_l_yellow}══╡${fg_white} $1 ${end}\n"
+  printf "\n ${fg_l_yellow}┌──${fg_black}${bg_l_yellow} SETUP ${bg_default}${fg_l_yellow}──┤${fg_white}$1 ${end}\n"
 }
 
 
