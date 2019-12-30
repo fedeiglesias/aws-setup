@@ -47,6 +47,26 @@ magenta=$'\001\e[35m\002'
 cyan=$'\001\e[36m\002'
 end=$'\001\e[0m\002'
 
+# BACKGROUNDS
+bg_default=$'\001\e[49m\002'
+bg_black=$'\001\e[40m\002'
+bg_red=$'\001\e[41m\002'
+bg_green=$'\001\e[42m\002'
+bg_yellow=$'\001\e[43m\002'
+bg_blue=$'\001\e[44m\002'
+bg_magenta=$'\001\e[45m\002'
+bg_cyan=$'\001\e[46m\002'
+bg_d_gray=$'\001\e[100m\002'
+bg_l_gray=$'\001\e[47m\002'
+bg_l_red=$'\001\e[101m\002'
+bg_l_green=$'\001\e[102m\002'
+bg_l_yellow=$'\001\e[103m\002'
+bg_l_blue=$'\001\e[104m\002'
+bg_l_magenta=$'\001\e[105m\002'
+bg_l_cyan=$'\001\e[106m\002'
+bg_l_white=$'\001\e[107m\002'
+
+
 working()
 {
   printf "\r [ ${blue}WORKING${end} ] "
@@ -74,7 +94,7 @@ info()
 
 config_title()
 {
-  printf "\n ${yellow}╒═ CONFIG ════╡ ${white}$1 ${yellow}${dim}█▓▒░${end}\n"
+  printf "\n ${yellow}╒═ CONFIG ════╡${bg_l_yellow}${white}$1${yellow}█▓▒░${end}\n"
 }
 
 
