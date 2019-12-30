@@ -643,7 +643,7 @@ config_item "Main domain" true && read -p "" MAIN_DOMAIN
 
 config_title "GIT"
 read -p "$(config_item 'Username')" -e -i "$SERVER_NAME" GIT_USERNAME
-read -p "$(config_item 'Email')" -e -i "$GIT_USERNAME@$MAIN_DOMAIN" GIT_EMAIL
+read -p "$(config_item 'Email' true)" -e -i "$GIT_USERNAME@$MAIN_DOMAIN" GIT_EMAIL
 
 
 
