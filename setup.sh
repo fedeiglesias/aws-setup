@@ -640,8 +640,12 @@ config_item "Server name" && read -p "" SERVER_NAME
 config_item "Main domain" true && read -p "" MAIN_DOMAIN
 
 config_title "GIT"
-config_item "Username" && read -p "$SERVER_NAME" GIT_USERNAME
-config_item "Email" true && read -p "$GIT_USERNAME@$MAIN_DOMAIN" GIT_EMAIL
+config_item "Username [$SERVER_NAME]"
+read -p "" -i "pruebaa" GIT_USERNAME
+
+config_item "Email [$GIT_USERNAME@$MAIN_DOMAIN]" true && read -p "" GIT_EMAIL
+
+
 
 config_title "NGINX Webhook"
 config_item "Git repo (SSH)" && read -p "" WEBHOOK_NGINX_CONFIG_REPO
