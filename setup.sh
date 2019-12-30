@@ -4,14 +4,14 @@ printLogo()
 {
   echo -e ""
   echo -e ""
-  echo -e "  ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗ ${fg_blue}██╗  ${fg_blue}██╗ ${fg_blue}███████${fg_d_gray}╗ ${fg_blue}████████╗ \n"
-  echo -e "  ${fg_blue}██${fg_d_gray}╔══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔═══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔════╝ ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}╔╝ ${fg_blue}██${fg_d_gray}╔════╝ ╚══${fg_blue}██${fg_d_gray}╔══╝\n"
-  echo -e "  ${fg_blue}██████${fg_d_gray}╔╝ ${fg_blue}██${fg_d_gray}║   ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}║      ${fg_blue}█████${fg_d_gray}╔╝  ${fg_blue}█████${fg_d_gray}╗      ${fg_blue}██${fg_d_gray}║ \n"
-  echo -e "  ${fg_blue}██${fg_d_gray}╔══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}║   ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}║      ${fg_blue}██${fg_d_gray}╔═${fg_blue}██${fg_d_gray}╗  ${fg_blue}██${fg_d_gray}╔══╝      ${fg_blue}██${fg_d_gray}║ \n"
-  echo -e "  ${fg_blue}██${fg_d_gray}║  ${fg_blue}██${fg_d_gray}║ ╚${fg_blue}██████${fg_d_gray}╔╝ ╚${fg_blue}██████${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}║  ${fg_blue}██${fg_d_gray}╗ ${fg_blue}███████${fg_d_gray}╗    ${fg_blue}██${fg_d_gray}║ \n"
-  echo -e "  ${fg_d_gray}╚═╝  ╚═╝  ╚═════╝   ╚═════╝ ╚═╝  ╚═╝ ╚══════╝    ╚═╝ \n"
+  echo -e "  ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╗  ${fg_blue}██${fg_d_gray}╗ ${fg_blue}███████${fg_d_gray}╗ ${fg_blue}████████${fg_d_gray}╗ "
+  echo -e "  ${fg_blue}██${fg_d_gray}╔══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔═══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔════╝ ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}╔╝ ${fg_blue}██${fg_d_gray}╔════╝ ╚══${fg_blue}██${fg_d_gray}╔══╝"
+  echo -e "  ${fg_blue}██████${fg_d_gray}╔╝ ${fg_blue}██${fg_d_gray}║   ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}║      ${fg_blue}█████${fg_d_gray}╔╝  ${fg_blue}█████${fg_d_gray}╗      ${fg_blue}██${fg_d_gray}║ "
+  echo -e "  ${fg_blue}██${fg_d_gray}╔══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}║   ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}║      ${fg_blue}██${fg_d_gray}╔═${fg_blue}██${fg_d_gray}╗  ${fg_blue}██${fg_d_gray}╔══╝      ${fg_blue}██${fg_d_gray}║ "
+  echo -e "  ${fg_blue}██${fg_d_gray}║  ${fg_blue}██${fg_d_gray}║ ╚${fg_blue}██████${fg_d_gray}╔╝ ╚${fg_blue}██████${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}║  ${fg_blue}██${fg_d_gray}╗ ${fg_blue}███████${fg_d_gray}╗    ${fg_blue}██${fg_d_gray}║ "
+  echo -e "  ${fg_d_gray}╚═╝  ╚═╝  ╚═════╝   ╚═════╝ ╚═╝  ╚═╝ ╚══════╝    ╚═╝ "
   echo -e ""
-} 
+}
 
 # Rocket
 ROCKET_REPO='https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master'
