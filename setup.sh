@@ -116,9 +116,6 @@ config_title()
   printf "\n ${fg_l_yellow}┌──${fg_black}${bg_l_yellow} SETUP ${bg_default}${fg_l_yellow}──┤${fg_white}$1 ${end}\n"
 }
 
-
-
-
 config_item()
 {
   LAST=false
@@ -398,12 +395,12 @@ createSSHKeysDir()
     chown $USER $SSH_DIR/authorized_keys
     chown $USER $SSH_DIR $SSH_DIR
     # Restart SSH service
-    service ssh restart
+    sudo systemctl restart sshd
 
   } 2>/dev/null
 
   # Add github to know hosts
-  ssh-keyscan github.com >> ~/.ssh/known_hosts
+  # ssh-keyscan github.com >> ~/.ssh/known_hosts
 
   # All go ok
   ok && printf "Set SSH dir structure and perms" && nl
@@ -506,9 +503,9 @@ installNginx()
   working && printf "Installing Nginx ..."
   sudo yum -y install nginx >$YUM_OUTPUT_FILE && waitYUM
   # Add Nginx to startup
-  sudo chkconfig nginx on 2>&1 >/dev/null
+  sudo systemctl start nginx.service 2>&1 >/dev/null
   # Start Server
-  sudo service nginx start 2>&1 >/dev/null
+  sudo service nginx start.service 2>&1 >/dev/null
   # All go ok
   ok && printf "Nginx installed" && nl
 }
