@@ -114,7 +114,7 @@ info()
 
 config_title()
 {
-  printf "\n ${fg_yellow}╒═ CONFIG ════╡${white}$1${fg_yellow}█▓▒░${end}\n"
+  printf "\n ${fg_yellow}╒═ CONFIG ════▐${bg_yellow}${fg_black}$1${fg_yellow}█▓▒░${end}\n"
 }
 
 
