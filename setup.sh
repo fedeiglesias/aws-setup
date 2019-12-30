@@ -4,12 +4,12 @@ printLogo()
 {
   echo -n ""
   echo -n ""
-  echo -n "  ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗ ${fg_blue}██╗  ${fg_blue}██╗ ${fg_blue}███████${fg_d_gray}╗ ${fg_blue}████████╗"
-  echo -n "  ${fg_blue}██${fg_d_gray}╔══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔═══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔════╝ ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}╔╝ ██${fg_d_gray}╔════╝ ╚══${fg_blue}██${fg_d_gray}╔══╝"
-  echo -n "  ${fg_blue}██████${fg_d_gray}╔╝ ${fg_blue}██${fg_d_gray}║   ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}║      ${fg_blue}█████${fg_d_gray}╔╝  ${fg_blue}█████${fg_d_gray}╗      ${fg_blue}██${fg_d_gray}║ "
-  echo -n "  ${fg_blue}██${fg_d_gray}╔══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}║   ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}║      ${fg_blue}██${fg_d_gray}╔═${fg_blue}██${fg_d_gray}╗  ${fg_blue}██${fg_d_gray}╔══╝      ${fg_blue}██${fg_d_gray}║ "
-  echo -n "  ${fg_blue}██${fg_d_gray}║  ${fg_blue}██${fg_d_gray}║ ╚${fg_blue}██████${fg_d_gray}╔╝ ╚${fg_blue}██████${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}║  ${fg_blue}██${fg_d_gray}╗ ${fg_blue}███████${fg_d_gray}╗    ${fg_blue}██${fg_d_gray}║ "
-  echo -n "  ${fg_d_gray}╚═╝  ╚═╝  ╚═════╝   ╚═════╝ ╚═╝  ╚═╝ ╚══════╝    ╚═╝ "
+  echo -n "  ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗ ${fg_blue}██╗  ${fg_blue}██╗ ${fg_blue}███████${fg_d_gray}╗ ${fg_blue}████████╗ \n"
+  echo -n "  ${fg_blue}██${fg_d_gray}╔══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔═══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔════╝ ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}╔╝ ${fg_blue}██${fg_d_gray}╔════╝ ╚══${fg_blue}██${fg_d_gray}╔══╝\n"
+  echo -n "  ${fg_blue}██████${fg_d_gray}╔╝ ${fg_blue}██${fg_d_gray}║   ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}║      ${fg_blue}█████${fg_d_gray}╔╝  ${fg_blue}█████${fg_d_gray}╗      ${fg_blue}██${fg_d_gray}║ \n"
+  echo -n "  ${fg_blue}██${fg_d_gray}╔══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}║   ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}║      ${fg_blue}██${fg_d_gray}╔═${fg_blue}██${fg_d_gray}╗  ${fg_blue}██${fg_d_gray}╔══╝      ${fg_blue}██${fg_d_gray}║ \n"
+  echo -n "  ${fg_blue}██${fg_d_gray}║  ${fg_blue}██${fg_d_gray}║ ╚${fg_blue}██████${fg_d_gray}╔╝ ╚${fg_blue}██████${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}║  ${fg_blue}██${fg_d_gray}╗ ${fg_blue}███████${fg_d_gray}╗    ${fg_blue}██${fg_d_gray}║ \n"
+  echo -n "  ${fg_d_gray}╚═╝  ╚═╝  ╚═════╝   ╚═════╝ ╚═╝  ╚═╝ ╚══════╝    ╚═╝ \n"
   echo -n ""
 } 
 
