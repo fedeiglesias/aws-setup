@@ -47,6 +47,26 @@ magenta=$'\001\e[35m\002'
 cyan=$'\001\e[36m\002'
 end=$'\001\e[0m\002'
 
+fg_default=$'\001\e[39m\002'
+fg_white=$'\001\e[97m\002'
+fg_black=$'\001\e[30m\002'
+fg_red=$'\001\e[31m\002'
+fg_green=$'\001\e[32m\002'
+fg_yellow=$'\001\e[33m\002'
+fg_blue=$'\001\e[34m\002'
+fg_magenta=$'\001\e[35m\002'
+fg_cyan=$'\001\e[36m\002'
+fg_d_gray=$'\001\e[90m\002'
+fg_l_gray=$'\001\e[37m\002'
+fg_l_red=$'\001\e[91m\002'
+fg_l_green=$'\001\e[92m\002'
+fg_l_yellow=$'\001\e[93m\002'
+fg_l_blue=$'\001\e[94m\002'
+fg_l_magenta=$'\001\e[95m\002'
+fg_l_cyan=$'\001\e[96m\002'
+
+
+
 # BACKGROUNDS
 bg_default=$'\001\e[49m\002'
 bg_black=$'\001\e[40m\002'
@@ -94,7 +114,7 @@ info()
 
 config_title()
 {
-  printf "\n ${yellow}╒═ CONFIG ════╡${bg_l_yellow}${white}$1${yellow}█▓▒░${end}\n"
+  printf "\n ${fg_yellow}╒═ CONFIG ════╡${white}$1${fg_yellow}█▓▒░${end}\n"
 }
 
 
@@ -112,7 +132,7 @@ config_item()
     PIPECHAR="└"
   fi
 
-  printf " ${yellow}${PIPECHAR} ${dim}$1 ${no_dim}${yellow}›${end} "
+  printf " ${fg_yellow}${PIPECHAR} ${fg_default}${dim}$1 ${no_dim}${fg_yellow}›${end} "
 }
 
 nl()
