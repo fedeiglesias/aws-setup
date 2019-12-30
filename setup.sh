@@ -2,15 +2,15 @@
 
 printLogo()
 {
-  echo ""
-  echo ""
-  echo "  ██████╗   ██████╗   ██████╗ ██╗  ██╗ ███████╗ ████████╗"
-  echo "  ██╔══██╗ ██╔═══██╗ ██╔════╝ ██║ ██╔╝ ██╔════╝ ╚══██╔══╝"
-  echo "  ██████╔╝ ██║   ██║ ██║      █████╔╝  █████╗      ██║ "
-  echo "  ██╔══██╗ ██║   ██║ ██║      ██╔═██╗  ██╔══╝      ██║ "
-  echo "  ██║  ██║ ╚██████╔╝ ╚██████╗ ██║  ██╗ ███████╗    ██║ "
-  echo "  ╚═╝  ╚═╝  ╚═════╝   ╚═════╝ ╚═╝  ╚═╝ ╚══════╝    ╚═╝ "
-  echo ""
+  printf ""
+  printf ""
+  printf "  ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗ ${fg_blue}██╗  ${fg_blue}██╗ ${fg_blue}███████${fg_d_gray}╗ ${fg_blue}████████╗"
+  printf "  ${fg_blue}██${fg_d_gray}╔══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔═══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔════╝ ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}╔╝ ██${fg_d_gray}╔════╝ ╚══${fg_blue}██${fg_d_gray}╔══╝"
+  printf "  ${fg_blue}██████╔╝ ██║   ██║ ██║      █████╔╝  █████╗      ██║ "
+  printf "  ${fg_blue}██╔══██╗ ██║   ██║ ██║      ██╔═██╗  ██╔══╝      ██║ "
+  printf "  ${fg_blue}██║  ██║ ╚██████╔╝ ╚██████╗ ██║  ██╗ ███████╗    ██║ "
+  printf "  ╚═╝  ╚═╝  ╚═════╝   ╚═════╝ ╚═╝  ╚═╝ ╚══════╝    ╚═╝ "
+  printf ""
 } 
 
 # Rocket
