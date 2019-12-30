@@ -74,7 +74,7 @@ info()
 
 config_title()
 {
-  printf "\n ${yellow}╒═ CONFIG ═╡ ${white}$1 ${yellow}${dim}█▓▒░${end}\n"
+  printf "\n ${yellow}╒═ CONFIG ════╡ ${white}$1 ${yellow}${dim}█▓▒░${end}\n"
 }
 
 
@@ -92,7 +92,7 @@ config_item()
     PIPECHAR="└"
   fi
 
-  printf " ${yellow}${PIPECHAR} ${dark_gray}$1 ${yellow}›${end} "
+  printf " ${yellow}${PIPECHAR} ${dim}$1 ${no_dim}${yellow}›${end} "
 }
 
 nl()
