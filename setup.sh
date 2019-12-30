@@ -34,9 +34,9 @@ SSL_CERTIFICATES_DIR="/home/$USER/.ssl_certificates"
 
 
 # COLORS
-white=$'\001\e[97\002'
 dim=$'\001\e[2m\002'
 no_dim=$'\001\e[22m\002'
+white=$'\001\e[97m\002'
 dark_gray=$'\001\e[90m\002'
 red=$'\001\e[31m\002'
 green=$'\001\e[32m\002'
