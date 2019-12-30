@@ -89,7 +89,7 @@ config_item()
     PIPECHAR="└"
   fi
 
-  printf " ${yellow}${PIPECHAR}${end} ${dark_gray}$1${end}${yellow} ›${end} "
+  printf " ${yellow}${PIPECHAR}${end} ${dark_gray}$1${end} ${yellow}›${end} "
 }
 
 nl()
@@ -638,16 +638,16 @@ nginxWebhook()
 clear && printLogo
 
 config_title "General"
-read -p "$(config_item 'Server name')" -e -i "rocket" SERVER_NAME
-read -p "$(config_item 'Main domain' true)" -e -i "pixium.io" MAIN_DOMAIN
+read -p "$(config_item "Server name")" -e -i "rocket" SERVER_NAME
+read -p "$(config_item "Main domain" true)" -e -i "pixium.io" MAIN_DOMAIN
 
 config_title "GIT"
-read -p "$(config_item 'Username')" -e -i "$SERVER_NAME" GIT_USERNAME
-read -p "$(config_item 'Email' true)" -e -i "$GIT_USERNAME@$MAIN_DOMAIN" GIT_EMAIL
+read -p "$(config_item "Username")" -e -i "$SERVER_NAME" GIT_USERNAME
+read -p "$(config_item "Email" true)" -e -i "$GIT_USERNAME@$MAIN_DOMAIN" GIT_EMAIL
 
 config_title "NGINX Webhook"
-read -p "$(config_item 'Git repo (SSH)')" -e -i "rocket" WEBHOOK_NGINX_CONFIG_REPO
-read -p "$(config_item 'Webhook secret word' true)" -e -i "SeCrET" WEBHOOK_NGINX_CONFIG_SECRET
+read -p "$(config_item "Git repo (SSH)")" -e -i "rocket" WEBHOOK_NGINX_CONFIG_REPO
+read -p "$(config_item "Webhook secret word" true)" -e -i "SeCrET" WEBHOOK_NGINX_CONFIG_SECRET
 
 
 updateYUM
