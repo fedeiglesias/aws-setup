@@ -632,8 +632,7 @@ nginxWebhook()
   ok && printf "Nginx Webhook installed." && nl
 }
 
-
-printLogo
+clear && printLogo
 
 config_title "SERVER & DOMAIN"
 config_item "Server name" && read -p "" SERVER_NAME
