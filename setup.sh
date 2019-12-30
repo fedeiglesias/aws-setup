@@ -2,15 +2,15 @@
 
 printLogo()
 {
-  echo -n ""
-  echo -n ""
-  echo -n "  ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗ ${fg_blue}██╗  ${fg_blue}██╗ ${fg_blue}███████${fg_d_gray}╗ ${fg_blue}████████╗ \n"
-  echo -n "  ${fg_blue}██${fg_d_gray}╔══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔═══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔════╝ ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}╔╝ ${fg_blue}██${fg_d_gray}╔════╝ ╚══${fg_blue}██${fg_d_gray}╔══╝\n"
-  echo -n "  ${fg_blue}██████${fg_d_gray}╔╝ ${fg_blue}██${fg_d_gray}║   ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}║      ${fg_blue}█████${fg_d_gray}╔╝  ${fg_blue}█████${fg_d_gray}╗      ${fg_blue}██${fg_d_gray}║ \n"
-  echo -n "  ${fg_blue}██${fg_d_gray}╔══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}║   ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}║      ${fg_blue}██${fg_d_gray}╔═${fg_blue}██${fg_d_gray}╗  ${fg_blue}██${fg_d_gray}╔══╝      ${fg_blue}██${fg_d_gray}║ \n"
-  echo -n "  ${fg_blue}██${fg_d_gray}║  ${fg_blue}██${fg_d_gray}║ ╚${fg_blue}██████${fg_d_gray}╔╝ ╚${fg_blue}██████${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}║  ${fg_blue}██${fg_d_gray}╗ ${fg_blue}███████${fg_d_gray}╗    ${fg_blue}██${fg_d_gray}║ \n"
-  echo -n "  ${fg_d_gray}╚═╝  ╚═╝  ╚═════╝   ╚═════╝ ╚═╝  ╚═╝ ╚══════╝    ╚═╝ \n"
-  echo -n ""
+  echo -e ""
+  echo -e ""
+  echo -e "  ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗   ${fg_blue}██████${fg_d_gray}╗ ${fg_blue}██╗  ${fg_blue}██╗ ${fg_blue}███████${fg_d_gray}╗ ${fg_blue}████████╗ \n"
+  echo -e "  ${fg_blue}██${fg_d_gray}╔══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔═══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}╔════╝ ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}╔╝ ${fg_blue}██${fg_d_gray}╔════╝ ╚══${fg_blue}██${fg_d_gray}╔══╝\n"
+  echo -e "  ${fg_blue}██████${fg_d_gray}╔╝ ${fg_blue}██${fg_d_gray}║   ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}║      ${fg_blue}█████${fg_d_gray}╔╝  ${fg_blue}█████${fg_d_gray}╗      ${fg_blue}██${fg_d_gray}║ \n"
+  echo -e "  ${fg_blue}██${fg_d_gray}╔══${fg_blue}██${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}║   ${fg_blue}██${fg_d_gray}║ ${fg_blue}██${fg_d_gray}║      ${fg_blue}██${fg_d_gray}╔═${fg_blue}██${fg_d_gray}╗  ${fg_blue}██${fg_d_gray}╔══╝      ${fg_blue}██${fg_d_gray}║ \n"
+  echo -e "  ${fg_blue}██${fg_d_gray}║  ${fg_blue}██${fg_d_gray}║ ╚${fg_blue}██████${fg_d_gray}╔╝ ╚${fg_blue}██████${fg_d_gray}╗ ${fg_blue}██${fg_d_gray}║  ${fg_blue}██${fg_d_gray}╗ ${fg_blue}███████${fg_d_gray}╗    ${fg_blue}██${fg_d_gray}║ \n"
+  echo -e "  ${fg_d_gray}╚═╝  ╚═╝  ╚═════╝   ╚═════╝ ╚═╝  ╚═╝ ╚══════╝    ╚═╝ \n"
+  echo -e ""
 } 
 
 # Rocket
