@@ -34,17 +34,17 @@ SSL_CERTIFICATES_DIR="/home/$USER/.ssl_certificates"
 
 
 # COLORS
-white=$'\001\e[00;29m\002'
+white=$'\001\e[97\002'
 dim=$'\001\e[2m\002'
 no_dim=$'\001\e[22m\002'
 dark_gray=$'\001\e[90m\002'
-red=$'\001\e[00;31m\002'
-green=$'\001\e[00;32m\002'
+red=$'\001\e[31m\002'
+green=$'\001\e[32m\002'
 yellow=$'\001\e[93m\002'
-l_yellow=$'\001\e[00;93m\002'
-blue=$'\001\e[00;34m\002'
-magenta=$'\001\e[00;35m\002'
-cyan=$'\001\e[00;36m\002'
+l_yellow=$'\001\e[93m\002'
+blue=$'\001\e[34m\002'
+magenta=$'\001\e[35m\002'
+cyan=$'\001\e[36m\002'
 end=$'\001\e[0m\002'
 
 working()
@@ -74,7 +74,7 @@ info()
 
 config_title()
 {
-  printf "\n ${yellow}╒═ CONFIG ═╡${end} ${white}$1${end} ${yellow}█▓▒░${end}\n"
+  printf "\n ${yellow}╒═ CONFIG ═╡ ${white}$1 ${yellow}${dim}█▓▒░${end}\n"
 }
 
 
@@ -93,8 +93,6 @@ config_item()
   fi
 
   printf " ${yellow}${PIPECHAR} ${dark_gray}$1 ${yellow}›${end} "
-  # echo -e " \e[93mLight yellow"
-  # echo -e " \e[93m$PIPECHAR\e[0m $1"
 }
 
 nl()
