@@ -635,7 +635,7 @@ nginxWebhook()
 
 printLogo
 
-instalconfig_title "SERVER & DOMAIN"
+config_title "SERVER & DOMAIN"
 config_item "Server name" && read -p "" SERVER_NAME
 config_item "Main domain" true && read -p "" MAIN_DOMAIN
 
