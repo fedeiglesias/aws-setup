@@ -1,7 +1,11 @@
 # aws-setup
 
-1- run `source <(curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master/setup.sh)`
+1- run `source <(curl -s https://raw.githubusercontent.com/fedeiglesiasc/aws-setup/master/setup.sh?$(date + %s))`
 
+* bambu
+* fedeiglesias.com
+* git@github.com:fedeiglesiasc/server-nginx.git
+* pixium.io 
 
 Github have a nice feature called webhooks. With this feature you can send a 
 message to our server when your project have changes, so you can trigger a 
@@ -9,7 +13,6 @@ script that pull automatically from your repo and re run your app with the
 new changes. To start using webhooks, we need to do some things. Let get's started!
 First, we need to create a PRIVATE repo that will contain our webhooks configuraration.
 Copy the SSL key and paste it here (git@github.com:username/repo-name.git): 
-
 
 
 
