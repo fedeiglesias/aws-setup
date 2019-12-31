@@ -1,0 +1,14 @@
+[Unit]
+Description=A Webhook server to run with Github
+After=network.target
+After=systemd-user-sessions.service
+After=network-online.target
+
+[Service]
+Type=simple
+User=centos
+ExecStart=/home/$USER/go/bin/webhook -verbose -urlprefix "" -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1' 2>&1 >> /var/log/webhook.log 
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

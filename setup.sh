@@ -264,14 +264,8 @@ stop on runlevel [!2345]
 exec sudo -u $USER /home/$USER/go/bin/webhook -verbose -urlprefix "" -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1' 2>&1 >> /var/log/webhook.log 
 EOF
  
-  # Wait for conf file.
-  sleep 2
-
   # Reload configuration
   sudo initctl reload-configuration --quiet
-
-  # prueba
-  sleep 5
 
   # Start service
   sudo initctl start --quiet webhook
@@ -280,6 +274,40 @@ EOF
   ok && printf "Webhook added to UpStart" && nl
 }
 
+addWebhookToSystemd()
+{
+ # Add webhook in crontab
+  working && printf "Adding Webhook to startup (systemd) ..."
+  # Add service to UpStart
+  sudo tee -a /lib/systemd/system/webhook.service >/dev/null <<EOF
+[Unit]
+Description=A Webhook server to run with Github
+After=network.target
+After=systemd-user-sessions.service
+After=network-online.target
+
+[Service]
+Type=simple
+User=centos
+ExecStart=/home/$USER/go/bin/webhook -verbose -urlprefix "" -hooks /home/$USER/webhooks/main/hook.json -hooks /home/$USER/webhooks/hooks/*/hook.json -ip '127.0.0.1' 2>&1 >> /var/log/webhook.log 
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+ 
+  # Reload configuration
+  sudo initctl reload-configuration --quiet
+
+  # Enable command to ensure that the service starts whenever the system boots
+  sudo systemctl enable webhook
+
+  # Start service
+  sudo initctl start --quiet webhook
+
+  # All go ok
+  ok && printf "Webhook added to startup (systemd)" && nl
+}
 
 createNginxConfMainDomain()
 {
