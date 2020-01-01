@@ -15,8 +15,6 @@ First, we need to create a PRIVATE repo that will contain our webhooks configura
 Copy the SSL key and paste it here (git@github.com:username/repo-name.git): 
 
 
-
-
 # Crear y dar permisos a la configuracion de ssh
 cat > ~/.ssh/config << EOF
   Host *
