@@ -256,9 +256,9 @@ addWebhookToUpstart()
  # Add webhook in crontab
   working && printf "Adding Webhook to startup (upstart) ..."
   # Add service to UpStart
-  sudo curl -o /etc/init/webhook.conf $ROCKET_REPO/startup/upstart/wwebhook.conf --silent
+  sudo curl -o /etc/init/webhook.conf $ROCKET_REPO/startup/upstart/webhook.conf --silent
   # Replace Placeholders
-  sed -i "s/\${USER}/$USER/g" /etc/systemd/system/webhook.service
+  sudo sed -i "s/\${USER}/$USER/g" /etc/systemd/system/webhook.service
   # Reload configuration
   sudo initctl reload-configuration --quiet
   # Start service
@@ -274,13 +274,11 @@ addWebhookToSystemd()
   # Add service to UpStart
   sudo curl -o /etc/systemd/system/webhook.service $ROCKET_REPO/startup/systemd/webhook.service --silent
   # Replace Placeholders
-  sed -i "s/\${USER}/$USER/g" /etc/systemd/system/webhook.service
-  # Reload configuration
-  sudo initctl reload-configuration --quiet
+  sudo sed -i "s/\${USER}/$USER/g" /etc/systemd/system/webhook.service
   # Enable command to ensure that the service starts whenever the system boots
   sudo systemctl enable webhook
   # Start service
-  sudo initctl start --quiet webhook
+  sudo systemctl start webhook
   # All go ok
   ok && printf "Webhook added to startup (systemd)" && nl
 }
@@ -696,25 +694,15 @@ read -p "$(config_item "Webhook secret word" true)" -e -i "SeCrET" WEBHOOK_NGINX
 
 
 updateYUM
-
 installNVM
-
 installNode
-
-installJava
-
-installJenkins
-
+# installJava
+# installJenkins
 createSSHKeysDir
-
 SSHAutoloadKeys
-
 installNginx
-
 installWebhook
-
 installAcme
-
 nginxWebhook
 
 
