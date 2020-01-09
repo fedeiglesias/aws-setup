@@ -169,17 +169,17 @@ updateYUM()
 {
   # Update YUM
   working && printf "Updating YUM ..."
-  sudo yum --nogpgcheck -y update >> $YUM_OUTPUT_FILE && waitYUM
+  sudo yum --nogpgcheck -y update 1> /dev/null 2>> $YUM_OUTPUT_FILE && waitYUM
   ok && printf "YUM is updated" && nl
 
   # Upgrade YUM
   working && printf "Upgrading YUM ..."
-  sudo yum --nogpgcheck -y upgrade >> $YUM_OUTPUT_FILE && waitYUM
+  sudo yum --nogpgcheck -y upgrade 1> /dev/null 2>> $YUM_OUTPUT_FILE && waitYUM
   ok && printf "YUM is upgraded" && nl
 
   #Remove orphan packages  
   working && printf "Clean orphan packages ..."
-  sudo yum --nogpgcheck -y autoremove >> $YUM_OUTPUT_FILE && waitYUM
+  sudo yum --nogpgcheck -y autoremove 1> /dev/null 2>> $YUM_OUTPUT_FILE && waitYUM
   ok && printf "YUM is clean" && nl
 }
 
@@ -469,14 +469,9 @@ loadAllKeys()
 installGit()
 {
   working && printf "Installing GIT ..."
-  
-  # Install GIT
   sudo yum -y install git 1> /dev/null 2>> $YUM_OUTPUT_FILE && waitYUM
-  
-  # Basic config
   git config --global user.name $GIT_USERNAME
   git config --global user.email $GIT_EMAIL
-  
   ok && printf "GIT installed" && nl
 }
 
@@ -484,7 +479,7 @@ installNginx()
 {
   # Install Nginx
   working && printf "Installing Nginx ..."
-  sudo yum --nogpgcheck -y install nginx >> $YUM_OUTPUT_FILE && waitYUM
+  sudo yum -y install nginx 1> /dev/null 2>> $YUM_OUTPUT_FILE && waitYUM
   # Add Nginx to startup
   sudo systemctl start nginx 2>&1 >/dev/null
   # Start Server
@@ -500,19 +495,15 @@ installNVM()
   working && printf "Installing NVM ..."
   
   # Support to get the latest version auto from source
-  sudo yum --nogpgcheck -y install epel-release >> $YUM_OUTPUT_FILE && waitYUM
-  sudo yum --nogpgcheck -y install jq >> $YUM_OUTPUT_FILE && waitYUM
+  sudo yum -y install epel-release 1> /dev/null 2>> $YUM_OUTPUT_FILE && waitYUM
+  sudo yum -y install jq 1> /dev/null 2>> $YUM_OUTPUT_FILE && waitYUM
 
   # LTS
   VER_LTS=$(curl -s 'https://api.github.com/repos/nvm-sh/nvm/releases/latest' | jq -r '.tag_name') 2>/dev/null
 
   # download installer
   curl -sS https://raw.githubusercontent.com/nvm-sh/nvm/$VER_LTS/install.sh > /tmp/install-nvm.sh 
-
-  # run installer 
   bash /tmp/install-nvm.sh 2>&1 >/dev/null
-
-  # delete install script
   rm -rf /tmp/install-nvm.sh
 
   # restart bash
@@ -586,7 +577,7 @@ installJava()
   working && printf "Installing Java ..."
 
   # Install Java
-  sudo yum -y install java-1.8.0 >> $YUM_OUTPUT_FILE && waitYUM
+  sudo yum -y install java-1.8.0 1> /dev/null 2>> $YUM_OUTPUT_FILE && waitYUM
 
   # Select Latest Version
   # sudo alternatives --set java /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/java
@@ -608,7 +599,7 @@ installJenkins()
   sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
 
   # Install Jenkins
-  sudo yum -y install jenkins >> $YUM_OUTPUT_FILE && waitYUM
+  sudo yum -y install jenkins 1> /dev/null 2>> $YUM_OUTPUT_FILE && waitYUM
 
   # Start Jenkins
   sudo service jenkins start 2>&1 >/dev/null
