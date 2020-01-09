@@ -276,7 +276,7 @@ addWebhookToSystemd()
   # Replace Placeholders
   sudo sed -i "s/\${USER}/$USER/g" /etc/systemd/system/webhook.service
   # Enable command to ensure that the service starts whenever the system boots
-  sudo systemctl enable webhook
+  sudo systemctl enable webhook 2>&1 >/dev/null
   # Start service
   sudo systemctl restart webhook
   # All go ok
@@ -664,7 +664,7 @@ nginxWebhook()
   curl -o ~/webhooks/hooks/nginx/script.sh $ROCKET_REPO/webhooks/nginx/script.sh --silent
 
   # Replace Script Placeholders
-  sed -i "s/\${NGINX_CONFIG_REPO}/$WEBHOOK_NGINX_CONFIG_REPO/g" ~/webhooks/hooks/nginx/script.sh
+  # sed -i "s/\${NGINX_CONFIG_REPO}/$WEBHOOK_NGINX_CONFIG_REPO/g" ~/webhooks/hooks/nginx/script.sh
 
   # set permission to execute file
   chmod +x ~/webhooks/hooks/nginx/script.sh
@@ -673,7 +673,6 @@ nginxWebhook()
   createSSHKey $NGINX_CONFIG_KEY_NAME 0
 
   # Restart Webhook
-  # sudo initctl restart --quiet webhook
   sudo systemctl restart webhook
 
 
