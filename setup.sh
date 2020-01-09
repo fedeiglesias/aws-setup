@@ -86,6 +86,8 @@ bg_l_cyan=$'\001\e[106m\002'
 bg_l_white=$'\001\e[107m\002'
 
 
+sed_scape_slash='s/\//\\\//g'
+
 working()
 {
   printf "\r [ ${blue}WORKING${end} ] "
@@ -162,6 +164,8 @@ waitYUM()
     fi
   done
 }
+
+
 
 updateYUM() 
 {
@@ -243,43 +247,22 @@ installWebhook()
 
  # Create hook structure
  configWebhooksFromGit
-
- # Add Webhook to Upstart
  addWebhookToSystemd
-
  # Create conf for Nginx
  createNginxConfMainDomain
-}
-
-addWebhookToUpstart()
-{
- # Add webhook in crontab
-  working && printf "Adding Webhook to startup (upstart) ..."
-  # Add service to UpStart
-  sudo curl -o /etc/init/webhook.conf $ROCKET_REPO/startup/upstart/webhook.conf --silent
-  # Replace Placeholders
-  sudo sed -i "s/\${USER}/$USER/g" /etc/systemd/system/webhook.service
-  # Reload configuration
-  sudo initctl reload-configuration --quiet
-  # Start service
-  sudo initctl start --quiet webhook
-  # All go ok
-  ok && printf "Webhook added to startup (upstart)" && nl
 }
 
 addWebhookToSystemd()
 {
   # Add webhook in crontab
-  working && printf "Adding Webhook to startup (systemd) ..."
-  # Add service to UpStart
+  working && printf "Adding Webhook to startup ..."
   sudo curl -o /etc/systemd/system/webhook.service $ROCKET_REPO/startup/systemd/webhook.service --silent
   # Replace Placeholders
-  sudo sed -i "s/\${USER}/$USER/g" /etc/systemd/system/webhook.service
+  SCAPED_USER=$(echo $USER | sed $sed_scape_slash)
+  sudo sed -i "s/\${USER}/$SCAPED_USER/g" /etc/systemd/system/webhook.service
   # Enable command to ensure that the service starts whenever the system boots
   sudo systemctl enable webhook 2>&1 >/dev/null
-  # Start service
-  sudo systemctl restart webhook
-  # All go ok
+  sudo systemctl restart webhook 2>&1 >/dev/null
   ok && printf "Webhook added to startup (systemd)" && nl
 }
 
@@ -656,15 +639,19 @@ nginxWebhook()
   # Get Hook
   curl -o ~/webhooks/hooks/nginx/hook.json $ROCKET_REPO/webhooks/nginx/hook.json --silent
 
-  # Replace placeholders  
-  sed -i "s/\${SECRET}/$WEBHOOK_NGINX_CONFIG_SECRET/g" ~/webhooks/hooks/nginx/hook.json
-  sed -i "s/\${USER}/$USER/g" ~/webhooks/hooks/nginx/hook.json
+  # Replace placeholders
+  SCAPED_SECRET=$(echo $WEBHOOK_NGINX_CONFIG_SECRET | sed $sed_scape_slash)
+  sed -i "s/\${SECRET}/$SCAPED_SECRET/g" ~/webhooks/hooks/nginx/hook.json
+
+  SCAPED_USER=$(echo $USER | sed $sed_scape_slash)
+  sed -i "s/\${USER}/$SCAPED_USER/g" ~/webhooks/hooks/nginx/hook.json
 
   # Get Script
   curl -o ~/webhooks/hooks/nginx/script.sh $ROCKET_REPO/webhooks/nginx/script.sh --silent
 
   # Replace Script Placeholders
-  # sed -i "s/\${NGINX_CONFIG_REPO}/$WEBHOOK_NGINX_CONFIG_REPO/g" ~/webhooks/hooks/nginx/script.sh
+  SCAPED_REPO=$(echo $WEBHOOK_NGINX_CONFIG_REPO | sed $sed_scape_slash)
+  sed -i "s/\${NGINX_CONFIG_REPO}/$SCAPED_REPO/g" ~/webhooks/hooks/nginx/script.sh
 
   # set permission to execute file
   chmod +x ~/webhooks/hooks/nginx/script.sh
