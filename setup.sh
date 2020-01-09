@@ -245,7 +245,7 @@ installWebhook()
  configWebhooksFromGit
 
  # Add Webhook to Upstart
- addWebhookToUpstart
+ addWebhookToSystemd
 
  # Create conf for Nginx
  createNginxConfMainDomain
@@ -693,7 +693,7 @@ read -p "$(config_item "Git repo (SSH)")" -e -i "rocket" WEBHOOK_NGINX_CONFIG_RE
 read -p "$(config_item "Webhook secret word" true)" -e -i "SeCrET" WEBHOOK_NGINX_CONFIG_SECRET
 
 
-updateYUM
+#updateYUM
 installNVM
 installNode
 # installJava
