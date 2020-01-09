@@ -670,8 +670,11 @@ config_title "NGINX Webhook"
 read -p "$(config_item "Git repo (SSH)")" -e -i "rocket" WEBHOOK_NGINX_CONFIG_REPO
 read -p "$(config_item "Webhook secret word" true)" -e -i "SeCrET" WEBHOOK_NGINX_CONFIG_SECRET
 
+echo -e ""
+echo -e ""
+echo -e ""
 
-#updateYUM
+updateYUM
 installNVM
 installNode
 # installJava
