@@ -278,7 +278,7 @@ addWebhookToSystemd()
   # Enable command to ensure that the service starts whenever the system boots
   sudo systemctl enable webhook
   # Start service
-  sudo systemctl start webhook
+  sudo systemctl restart webhook
   # All go ok
   ok && printf "Webhook added to startup (systemd)" && nl
 }
@@ -505,9 +505,9 @@ installNginx()
   working && printf "Installing Nginx ..."
   sudo yum -y install nginx >> $YUM_OUTPUT_FILE && waitYUM
   # Add Nginx to startup
-  sudo systemctl start nginx.service 2>&1 >/dev/null
+  sudo systemctl start nginx 2>&1 >/dev/null
   # Start Server
-  sudo service nginx start.service 2>&1 >/dev/null
+  sudo systemctl enable nginx 2>&1 >/dev/null
   # All go ok
   ok && printf "Nginx installed" && nl
 }
@@ -673,7 +673,9 @@ nginxWebhook()
   createSSHKey $NGINX_CONFIG_KEY_NAME 0
 
   # Restart Webhook
-  sudo initctl restart --quiet webhook
+  # sudo initctl restart --quiet webhook
+  sudo systemctl restart webhook
+
 
   ok && printf "Nginx Webhook installed." && nl
 }
