@@ -486,7 +486,7 @@ installNginx()
 {
   # Install Nginx
   working && printf "Installing Nginx ..."
-  sudo yum -y install nginx >> $YUM_OUTPUT_FILE && waitYUM
+  sudo yum --nogpgcheck -y install nginx >> $YUM_OUTPUT_FILE && waitYUM
   # Add Nginx to startup
   sudo systemctl start nginx 2>&1 >/dev/null
   # Start Server
