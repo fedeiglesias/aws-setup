@@ -259,9 +259,9 @@ addWebhookToSystemd()
   SCAPED_USER=$(echo $USER | sed $sed_scape_slash)
   sudo sed -i "s/\${USER}/$SCAPED_USER/g" /etc/systemd/system/webhook.service
   # Enable command to ensure that the service starts whenever the system boots
-  sudo systemctl enable webhook 2>&1 >/dev/null
-  sudo systemctl restart webhook 2>&1 >/dev/null
-  ok && printf "Webhook added to startup (systemd)" && nl
+  sudo systemctl enable webhook --quiet 2>&1 >/dev/null
+  sudo systemctl restart webhook --quiet 2>&1 >/dev/null
+  ok && printf "Webhook added to startup" && nl
 }
 
 createNginxConfMainDomain()
@@ -479,11 +479,12 @@ installNginx()
 {
   # Install Nginx
   working && printf "Installing Nginx ..."
+  sudo yum -y install epel-release 1> /dev/null 2>> $YUM_OUTPUT_FILE && waitYUM
   sudo yum -y install nginx 1> /dev/null 2>> $YUM_OUTPUT_FILE && waitYUM
-  # Add Nginx to startup
-  sudo systemctl start nginx 2>&1 >/dev/null
-  # Start Server
-  sudo systemctl enable nginx 2>&1 >/dev/null
+
+  sudo systemctl enable nginx --quiet 2>&1 >/dev/null
+  sudo systemctl start nginx --quiet 2>&1 >/dev/null
+
   # All go ok
   ok && printf "Nginx installed" && nl
 }
@@ -649,7 +650,7 @@ nginxWebhook()
   createSSHKey $NGINX_CONFIG_KEY_NAME 0
 
   # Restart Webhook
-  sudo systemctl restart webhook
+  sudo systemctl restart webhook --quiet
 
 
   ok && printf "Nginx Webhook installed." && nl
