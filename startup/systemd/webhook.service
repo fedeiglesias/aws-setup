@@ -6,8 +6,7 @@ After=network-online.target
 
 [Service]
 Type=simple
-User=centos
-ExecStart=/home/${USER}/go/bin/webhook -verbose -urlprefix "" -hooks /home/${USER}/webhooks/main/hook.json -hooks /home/${USER}/webhooks/hooks/*/hook.json -ip '127.0.0.1' 2>&1 >> /var/log/webhook.log 
+ExecStart=/usr/bin/bash -c "/home/${USER}/go/bin/webhook -verbose -urlprefix '' -ip '127.0.0.1' -hooks /home/${USER}/webhooks/main/hook.json $(for f in $(ls /home/${USER}/webhooks/hooks/*/hook.json); do echo -n ' -hooks' $f; done)"
 Restart=on-failure
 
 [Install]
