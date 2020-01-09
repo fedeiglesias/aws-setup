@@ -165,8 +165,6 @@ waitYUM()
   done
 }
 
-
-
 updateYUM() 
 {
   # Update YUM
@@ -473,7 +471,7 @@ installGit()
   working && printf "Installing GIT ..."
   
   # Install GIT
-  sudo yum -y install git >> $YUM_OUTPUT_FILE && waitYUM
+  sudo yum -y install git 1> /dev/null 2>> $YUM_OUTPUT_FILE && waitYUM
   
   # Basic config
   git config --global user.name $GIT_USERNAME
